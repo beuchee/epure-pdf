@@ -495,6 +495,109 @@ Facile.
 
 ---
 
+## DEC-0019 — Accepter ACTION_SEND (« Partager »)
+
+- Date : 25/10/2026
+- Statut : Adoptée
+- Jalon : 2
+- Exigences concernées : F-1.2
+
+**Contexte**
+Certaines apps proposent « Partager » plutôt que « Ouvrir avec » pour un PDF.
+
+**Décision**
+Accepter `ACTION_SEND` avec le type `application/pdf`, en plus de `ACTION_VIEW`. Le fichier est lu depuis `EXTRA_STREAM`.
+
+**Justification**
+Coût faible (un filtre et une lecture d'extra), et le même traitement que `VIEW`.
+
+**Conséquences**
+- Filtre `SEND` ajouté au manifeste.
+- Sur l'appareil, « Partager vers Épure PDF » doit ouvrir le document (contrôle de la session 2a).
+
+**Réversibilité**
+Facile.
+
+---
+
+## DEC-0020 — Lecteur ouvert par une autre app : tâche de l'app d'origine
+
+- Date : 25/10/2026
+- Statut : Adoptée
+- Jalon : 2
+- Exigences concernées : F-1.2, F-6.4
+
+**Contexte**
+Quand un PDF est ouvert depuis une autre app, le lecteur peut s'ouvrir dans la tâche de cette app ou dans une tâche propre à Épure PDF.
+
+**Décision**
+Comportement standard : le lecteur s'ouvre dans la tâche de l'app d'origine. Retour (F-6.4) : le lecteur se ferme et l'utilisateur revient à l'app d'origine.
+
+**Justification**
+Le retour attendu est celui d'une visionneuse : on revient d'où l'on vient. Pas de `launchMode` particulier.
+
+**Conséquences**
+- Pas de `launchMode` dans le manifeste.
+- Quand le lecteur a été ouvert par une autre app, « Retour » termine l'activité au lieu d'afficher l'accueil.
+
+**Réversibilité**
+Facile.
+
+---
+
+## DEC-0021 — Récent devenu illisible
+
+- Date : 25/10/2026
+- Statut : Adoptée
+- Jalon : 2 (appliquée en session 2b)
+- Exigences concernées : F-1.3, F-4.1
+
+**Contexte**
+Un document ouvert par `VIEW` peut ne plus être lisible plus tard, si le droit était temporaire.
+
+**Décision**
+(a) Le récent reste affiché, en `TextSecondary`. Au toucher : « Fichier inaccessible. Ouvre-le à nouveau depuis le sélecteur. » avec l'action « Ouvrir un fichier ». La position de lecture est conservée si le même fichier est rouvert (F-4.5).
+
+**Justification**
+La liste des récents reste utile : un fichier déplacé ou un droit retiré n'efface pas la position de lecture.
+
+**Conséquences**
+- Traité en session 2b, avec la liste des récents.
+
+**Réversibilité**
+Facile.
+
+---
+
+## DEC-0022 — Copie temporaire pour un descripteur non repositionnable
+
+- Date : 25/10/2026
+- Statut : Adoptée
+- Jalon : 2
+- Exigences concernées : F-1.4, DEC-0008
+
+**Contexte**
+PdfRenderer exige un fichier sur lequel il peut se déplacer. Certaines sources (pièces jointes, téléchargements en cours) fournissent un flux non repositionnable.
+
+**Options**
+- (a) Copie temporaire dans le cache privé de l'app.
+- (b) Message d'erreur.
+
+**Décision**
+(a), seulement quand le descripteur n'est pas repositionnable. La copie est dans le cache privé (`cacheDir`), supprimée à la fermeture du document et au démarrage suivant.
+
+**Justification**
+Une pièce jointe ou un téléchargement doit pouvoir s'ouvrir. Le message d'erreur ne serait pas utile dans ce cas.
+
+**Conséquences**
+- Exception à DEC-0008 (« l'app ne copie pas les documents ») : seul le document ouvert, et temporairement, est copié.
+- Les limites sont à consigner au contrôle sur l'appareil (session 2a).
+
+**Réversibilité**
+Facile : retirer la copie et afficher le message.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).

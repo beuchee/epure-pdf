@@ -81,16 +81,16 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 **F-1.2 Ouverture depuis une autre app (intent `VIEW`).** L'app déclare un filtre `ACTION_VIEW`, catégorie `DEFAULT`, type `application/pdf`, schéma `content`. Elle apparaît dans « Ouvrir avec » d'un gestionnaire de fichiers, d'une messagerie, d'un navigateur.
 - Critères : un PDF ouvert depuis « Mes fichiers », une pièce jointe d'e-mail et un téléchargement du navigateur s'affichent dans le lecteur ; le bouton Retour ramène à l'app d'origine.
 - Le schéma `file://` n'est pas accepté (interdit pour le partage entre apps depuis Android 7).
-- **[À DÉCIDER]** Accepter aussi `ACTION_SEND` (`application/pdf`) : certaines apps proposent « Partager » plutôt que « Ouvrir avec ».
-- **[À DÉCIDER]** Comportement de la tâche Android (`launchMode`) quand un PDF est ouvert depuis une autre app : lecteur dans la tâche de l'app d'origine (comportement standard) ou dans la tâche d'Épure PDF. Proposition : comportement standard.
+- **[Décidé : DEC-0019]** Accepter aussi `ACTION_SEND` (`application/pdf`) : certaines apps proposent « Partager » plutôt que « Ouvrir avec ».
+- **[Décidé : DEC-0020]** Comportement de la tâche Android (`launchMode`) quand un PDF est ouvert depuis une autre app : lecteur dans la tâche de l'app d'origine (comportement standard) ou dans la tâche d'Épure PDF. Proposition : comportement standard.
 
 **F-1.3 Limite des autorisations reçues par `VIEW`.** Une URI reçue par `VIEW` donne en général un droit **temporaire** : il n'est persistant que si l'app d'origine l'a permis. Conséquence : un tel fichier peut ne plus être lisible plus tard depuis les récents.
 - **[À VÉRIFIER]** Pour « Mes fichiers », Google Files, Samsung Email, Gmail, Chrome : le droit est-il persistant ?
-- **[À DÉCIDER]** Traitement d'un récent devenu illisible : (a) l'afficher en `TextSecondary` avec, au toucher, « Fichier inaccessible. Ouvre-le à nouveau depuis le sélecteur. » et l'action « Ouvrir un fichier » ; (b) ne pas l'ajouter aux récents. Proposition : (a), la position de lecture étant retrouvée si le même fichier est rouvert (voir F-4.5).
+- **[Décidé : DEC-0021]** Traitement d'un récent devenu illisible : (a) l'afficher en `TextSecondary` avec, au toucher, « Fichier inaccessible. Ouvre-le à nouveau depuis le sélecteur. » et l'action « Ouvrir un fichier » ; (b) ne pas l'ajouter aux récents. Proposition : (a), la position de lecture étant retrouvée si le même fichier est rouvert (voir F-4.5).
 
 **F-1.4 Fichier non lisible directement.** Le moteur de rendu (PdfRenderer notamment) exige un descripteur de fichier sur lequel il peut se déplacer librement. Certaines apps fournissent un flux non repositionnable (pièces jointes, fichiers en cours de téléchargement).
 - **[À VÉRIFIER]** Quelles sources fournissent un descripteur non repositionnable.
-- **[À DÉCIDER]** En ce cas : (a) copie **temporaire** dans le cache privé de l'app, supprimée à la fermeture du document et au démarrage suivant ; (b) message d'erreur. La note de cadrage dit « l'app ne copie pas les fichiers » : l'option (a) est une dérogation à consigner dans `DECISIONS.md` si elle est retenue.
+- **[Décidé : DEC-0022]** En ce cas : (a) copie **temporaire** dans le cache privé de l'app, supprimée à la fermeture du document et au démarrage suivant ; (b) message d'erreur. La note de cadrage dit « l'app ne copie pas les fichiers » : l'option (a) est une dérogation à consigner dans `DECISIONS.md` si elle est retenue.
 
 **F-1.5 Erreurs d'ouverture.** Fichier absent, droit retiré, fichier vide, fichier qui n'est pas un PDF, PDF mal formé : un message en texte, sans plantage, et retour possible à l'accueil. Libellés (proposition) : « Fichier introuvable. », « Accès au fichier retiré. », « Ce fichier n'est pas un PDF lisible. »
 
