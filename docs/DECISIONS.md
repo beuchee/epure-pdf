@@ -378,7 +378,42 @@ Facile : supprimer la branche.
 
 ## DEC-0015 — Moteur de rendu retenu
 
-- Statut : à rédiger après les mesures de la session 1a.
+- Date : 24/10/2026
+- Statut : Adoptée
+- Jalon : 1
+- Exigences concernées : `SPEC.md` §6, F-2.5, F-3.3, F-11, F-13, F-14.1, T-5, T-6, T-12
+
+**Contexte**
+La session 1a a comparé deux moteurs sur l'appareil de référence (Samsung SM-A536B, Android 16), à partir du jeu de test de l'annexe A.
+
+**Options**
+- (a) PdfRenderer, intégré à Android.
+- (b) androidx.pdf 1.0.0-beta01, visionneuse Jetpack.
+- (c) Moteur tiers (pdfium, MuPDF…) : écarté, il faudrait du code natif (DEC-0004).
+
+**Mesures**
+- PdfRenderer : ouverture entre 90 et 200 ms ; première page rendue entre 30 et 300 ms ; 300 pages et 70 Mo ouverts sans erreur ; mémoire d'environ 114 à 147 Mo (PSS) ; APK de prototype de 30,2 Mo ; recherche de texte sur 300 pages en 0,6 s.
+- androidx.pdf : fonctionne sur les mêmes documents ; APK de 38,4 Mo (+8,1 Mo) ; permissions inchangées ; mémoire non mesurée sur les mêmes documents.
+
+**Décision**
+(a) PdfRenderer, derrière l'interface de `system/`. La recherche de texte et l'ouverture avec mot de passe ne sont disponibles que sur Android 16 et plus (niveau API 36) ; sur les versions antérieures, ces fonctions sont désactivées avec un message. Le sommaire est écarté : aucune des deux API ne le fournit.
+
+**Justification**
+- PdfRenderer est intégré à Android : aucune dépendance (T-5), aucune permission, aucun impact sur la licence.
+- Il répond aux mesures demandées : ouverture et rendu rapides, mémoire acceptable, recherche et mot de passe sur Android 16.
+- androidx.pdf est une version bêta. Elle exige un `compileSdk` 37 (contraire à DEC-0012), tire d'autres bibliothèques (Material, fragment), et son interface a son propre style, en conflit avec la charte (A.5, A.6).
+- Les dépendances ajoutées pour le prototype B (`pdf-viewer`, `pdf-viewer-fragment`, `fragment-ktx`, `material`) et le passage à `compileSdk` 37 ne sont pas intégrés dans `main`. Ils restent sur la branche locale `spike/render-engine`, dont le commit `3ce53f5` garde les mesures.
+
+**Conséquences**
+- `SPEC.md` §6 : le point « [À DÉCIDER] » est tranché ; le moteur retenu est indiqué.
+- F-11 (recherche) : limitée à Android 16 et plus.
+- F-14.1 (mot de passe) : limitée à Android 16 et plus ; sur les versions antérieures, message « Ce document est protégé par un mot de passe et ne peut pas être ouvert. ».
+- F-13 (sommaire) : écartée.
+- Limites à assumer : PdfRenderer n'ouvre qu'une page à la fois (T-6) ; pas d'OCR ; pas de sommaire.
+- Le rendu des pages (défilement, zoom, cache) est à écrire dans l'application (jalons 1b et 1c).
+
+**Réversibilité**
+Moyenne. Un passage à androidx.pdf reste possible : il suffit d'écrire une seconde implémentation de l'interface de `system/`. Il faudra alors une nouvelle entrée pour `compileSdk` 37, les dépendances et le style de l'interface. Déclencheurs possibles : besoin de recherche ou de mot de passe sur Android 12 à 15, ou version stable d'androidx.pdf sans exigence de `compileSdk` 37.
 
 ---
 

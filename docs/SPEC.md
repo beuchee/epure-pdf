@@ -314,9 +314,11 @@ Listés dans les fonctions proposées, absents de la feuille de route. Points à
 
 ---
 
-## 6. Moteur de rendu — [À DÉCIDER au jalon 1]
+## 6. Moteur de rendu — [Décidé : DEC-0015]
 
 Décision prise après un prototype comparatif (jalon 1, session 1a), consignée dans `DECISIONS.md`.
+
+**Retenu : option A, PdfRenderer (DEC-0015).** Recherche de texte et mot de passe seulement sur Android 16 et plus ; sommaire non disponible (F-13 écartée).
 
 | Option | Description | Points forts | Points à vérifier |
 |---|---|---|---|
@@ -365,7 +367,7 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 
 | Réf. | Sujet | Jalon | Proposition |
 |---|---|---|---|
-| §6 | Moteur de rendu | 1 | Prototype A vs B ; C seulement si nécessaire |
+| §6 | Moteur de rendu | 1 | Décidé : A, PdfRenderer (DEC-0015) |
 | F-1.2 | Accepter `ACTION_SEND` | 2 | Oui si le coût est faible |
 | F-1.2 | `launchMode` pour `VIEW` | 2 | Comportement standard |
 | F-1.3 | Récent devenu illisible | 2 | Affiché en gris, message au toucher |
