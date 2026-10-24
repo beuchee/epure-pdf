@@ -340,6 +340,48 @@ Facile : retirer la permission par `tools:node="remove"` et refaire le contrôle
 
 ---
 
+## DEC-0014 — Prototype comparatif : ajout d'androidx.pdf sur une branche jetable
+
+- Date : 24/10/2026
+- Statut : Adoptée (prototype seulement ; le choix final du moteur est en DEC-0015)
+- Jalon : 1
+- Exigences concernées : `SPEC.md` §6, F-11, F-13, F-14.1, T-1
+
+**Contexte**
+La session 1a compare deux moteurs de rendu : PdfRenderer (intégré à Android, option A) et androidx.pdf (bibliothèque Jetpack, option B). Pour mesurer B, il faut l'ajouter au projet.
+
+**Caractéristiques vérifiées avant ajout** (fichiers Maven de Google)
+- Artefact : `androidx.pdf:pdf-viewer:1.0.0-beta01`, version bêta.
+- `minSdk` 28 pour tous ses modules : compatible avec le nôtre (31).
+- Dépendances déclarées : AndroidX (core, material, recyclerview, exifinterface), coroutines Kotlin.
+- Le module de reconnaissance de texte (`pdf-ocr-play-services`) dépend de ML Kit de Google. Il n'est pas nécessaire au prototype et n'est pas ajouté.
+- Aucun module ne déclare de permission dans son manifeste.
+
+**Options**
+- (a) Ajouter `pdf-viewer` sur une branche de prototype, pour mesurer.
+- (b) Écarter B sans la mesurer.
+
+**Décision**
+(a), sur la branche `spike/render-engine` seulement. Cette bibliothèque n'entre pas dans `main` avant DEC-0015.
+
+**Justification**
+Les mesures demandées par la feuille de route (poids, mémoire, temps, manifeste fusionné) ne peuvent pas être prises sans l'ajouter. Le prototype est jetable.
+
+**Conséquences**
+- `gradle/libs.versions.toml` et `app/build.gradle.kts` sont modifiés sur la branche de prototype seulement.
+- Le contrôle du manifeste fusionné se fera sur l'APK du prototype. Une permission `INTERNET` injectée rendrait B inacceptable.
+
+**Réversibilité**
+Facile : supprimer la branche.
+
+---
+
+## DEC-0015 — Moteur de rendu retenu
+
+- Statut : à rédiger après les mesures de la session 1a.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).
