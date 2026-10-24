@@ -111,12 +111,12 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 
 ### F-3 Zoom
 
-**F-3.1 Pincement.** Zoom continu entre la largeur de page (×1) et ×5 (proposition **[À DÉCIDER]**), centré sur les doigts. Déplacement horizontal et vertical libre une fois zoomé.
+**F-3.1 Pincement.** Zoom continu entre la largeur de page (×1) et ×5 (**[Décidé : DEC-0017]**), centré sur les doigts. Déplacement horizontal et vertical libre une fois zoomé.
 
 **F-3.2 Double toucher — cycle de zoom.** Cycle demandé : largeur de page → demi-page → retour à la largeur.
 - Second état (« demi-page ») : zoom ×2, cadré sur la moitié gauche ou droite de la page selon l'endroit touché. Usage visé : articles en deux colonnes, chaque colonne remplit alors l'écran.
-- **[À DÉCIDER]** Valeurs exactes du cycle : (a) largeur → demi-page → largeur ; (b) largeur → demi-page → zoom libre précédent → largeur. Proposition : (a).
-- **[À DÉCIDER]** Si l'utilisateur a zoomé par pincement, le double toucher ramène-t-il à la largeur ? Proposition : oui.
+- **[Décidé : DEC-0018]** Cycle : largeur → demi-page → largeur (variante a).
+- **[Décidé : DEC-0018]** Un double toucher après un pincement ramène à la largeur.
 - Cadrage vertical : le point touché reste sous le doigt après le zoom.
 
 **F-3.3 Rendu net après zoom.** Après la fin du geste, les pages visibles sont rendues à nouveau à la résolution correspondant au zoom, dans la limite de taille d'image fixée en T-6. Pendant le geste, l'image existante est agrandie (floue un court instant, sans animation ajoutée).

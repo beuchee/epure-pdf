@@ -446,6 +446,55 @@ Facile.
 
 ---
 
+## DEC-0017 — Zoom maximal ×5
+
+- Date : 25/10/2026
+- Statut : Adoptée
+- Jalon : 1
+- Exigences concernées : F-3.1, F-3.3, T-6
+
+**Contexte**
+F-3.1 laissait ouvert le zoom maximal (proposition : ×5).
+
+**Décision**
+Zoom continu par pincement entre la largeur de page (×1) et ×5.
+
+**Justification**
+Valeur de départ de la proposition, adaptée aux colonnes d'articles et aux petits caractères. Au-delà, le rendu de la page dépasserait la taille d'image bornée par T-6.
+
+**Conséquences**
+- Au zoom maximal, la page est rendue à une largeur bornée à environ 16 Mo d'image (T-6, valeur provisoire) : le texte peut paraître moins net qu'à l'écran réel. À évaluer sur l'appareil, puis à revoir au jalon 5 (rendu par tuiles, si nécessaire).
+- Le rendu net après le geste (F-3.3) se fait à la largeur bornée.
+
+**Réversibilité**
+Facile : changer la constante de zoom maximal.
+
+---
+
+## DEC-0018 — Cycle du double toucher
+
+- Date : 25/10/2026
+- Statut : Adoptée
+- Jalon : 1
+- Exigences concernées : F-3.2
+
+**Contexte**
+F-3.2 proposait un cycle largeur, demi-page, largeur, avec le cadrage sur la colonne touchée.
+
+**Décision**
+Largeur de page (×1) → demi-page (×2, cadrée sur la moitié gauche ou droite selon l'endroit touché) → largeur. Si l'utilisateur a zoomé par pincement, un double toucher ramène à la largeur. Le point touché reste sous le doigt après le zoom.
+
+**Justification**
+Usage visé : articles en deux colonnes, chaque colonne remplit alors l'écran. La proposition initiale est retenue sans changement.
+
+**Conséquences**
+- Aucune animation : le changement de cadrage est immédiat (CHARTE A.5).
+
+**Réversibilité**
+Facile.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).
