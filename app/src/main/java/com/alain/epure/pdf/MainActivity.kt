@@ -1,6 +1,8 @@
 package com.alain.epure.pdf
 
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -9,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.ViewModelProvider
 import com.alain.epure.pdf.ui.AppViewModel
 import com.alain.epure.pdf.ui.HomeScreen
@@ -38,14 +41,27 @@ class MainActivity : ComponentActivity() {
             EpureTheme {
                 val state by viewModel.state.collectAsState()
                 when (val current = state) {
-                    is UiState.Home -> HomeScreen(error = current.error, onOpen = viewModel::open)
+                    is UiState.Home -> HomeScreen(error = current.error, onOpen = { viewModel.open(it) })
                     is UiState.Reader -> ReaderScreen(
                         document = current.document,
                         cache = container.pageCache,
-                        onBack = viewModel::closeReader
+                        onBack = {
+                            // A document opened by another app: Back returns to that app (DEC-0020).
+                            if (current.external) finish() else viewModel.closeReader()
+                        }
                     )
                 }
             }
         }
+        if (savedInstanceState == null) {
+            externalUri(intent)?.let { viewModel.open(it, external = true) }
+        }
+    }
+
+    // Documents sent by other apps: "Ouvrir avec" (VIEW) or "Partager" (SEND), SPEC F-1.2.
+    private fun externalUri(intent: Intent?): Uri? = when (intent?.action) {
+        Intent.ACTION_VIEW -> intent.data
+        Intent.ACTION_SEND -> IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
+        else -> null
     }
 }

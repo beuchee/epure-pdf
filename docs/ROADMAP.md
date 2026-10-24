@@ -104,10 +104,10 @@ Session unique (0).
 **À trancher avant** : `ACTION_SEND` et `launchMode` (F-1.2) ; récent illisible (F-1.3) ; copie temporaire (F-1.4) ; taille du nom, nombre de récents, confirmation du retrait, identification secondaire (F-4.1, F-4.2, F-4.4, F-4.5) ; mémorisation du zoom (F-5.3) ; DataStore ou Room (§7).
 
 ### Session 2a — Intent `VIEW`
-- [ ] Filtre `VIEW` `application/pdf`, schéma `content` (F-1.2) ; `SEND` si décidé.
+- [x] Filtre `VIEW` `application/pdf`, schéma `content` (F-1.2) ; `SEND` si décidé.
 - [ ] Vérifier sur l'appareil la persistance des droits et le type de descripteur selon la source (F-1.3, F-1.4) ; consigner les résultats.
 - [ ] Copie temporaire ou message, selon la décision (F-1.4).
-- [ ] Retour depuis le lecteur ouvert par `VIEW` : retour à l'app d'origine.
+- [x] Retour depuis le lecteur ouvert par `VIEW` : retour à l'app d'origine.
 
 ### Session 2b — Récents et reprise
 - [ ] Persistance (`data/`) : récents, positions, réglages.

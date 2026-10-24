@@ -4,17 +4,23 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
-import androidx.core.graphics.createBitmap
 import android.net.Uri
 import android.os.ParcelFileDescriptor
+import android.system.ErrnoException
+import android.system.Os
+import android.system.OsConstants
+import androidx.core.graphics.createBitmap
 import com.alain.epure.pdf.domain.pageHeightPx
+import java.io.File
 import java.io.FileNotFoundException
+import java.io.IOException
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 // Engine based on the platform PdfRenderer (DEC-0015).
 // PdfRenderer accepts one open page at a time, so every call goes through one lock.
-class PdfRendererEngine : PdfEngine {
+class PdfRendererEngine(private val temporaryDir: File) : PdfEngine {
     override suspend fun open(context: Context, uri: Uri): OpenResult =
         withContext(Dispatchers.IO) {
             val descriptor = try {
@@ -26,22 +32,60 @@ class PdfRendererEngine : PdfEngine {
             }
             if (descriptor == null) return@withContext OpenResult.Failed(OpenError.NotFound)
 
+            // PdfRenderer needs to seek. Some sources (attachments, downloads in progress)
+            // give a stream that cannot seek: copy it to a temporary file (SPEC F-1.4, DEC-0022).
+            val temporary: File? = if (isSeekable(descriptor)) {
+                null
+            } else {
+                try {
+                    copyToTemporaryFile(descriptor)
+                } catch (e: IOException) {
+                    return@withContext OpenResult.Failed(OpenError.Unreadable)
+                }
+            }
+            val readable = if (temporary == null) descriptor else ParcelFileDescriptor.open(temporary, ParcelFileDescriptor.MODE_READ_ONLY)
+
             try {
-                OpenResult.Opened(RendererDocument(PdfRenderer(descriptor), descriptor))
+                OpenResult.Opened(RendererDocument(PdfRenderer(readable), readable, temporary))
             } catch (e: SecurityException) {
                 // Without a password, PdfRenderer refuses an encrypted file this way.
-                descriptor.close()
+                readable.close()
+                temporary?.delete()
                 OpenResult.Failed(OpenError.PasswordRequired)
             } catch (e: Exception) {
-                descriptor.close()
+                readable.close()
+                temporary?.delete()
                 OpenResult.Failed(OpenError.Unreadable)
             }
         }
+
+    // Removes copies left by an earlier run. Called once when the app starts.
+    fun clearTemporaryCopies() {
+        temporaryDir.deleteRecursively()
+    }
+
+    private fun isSeekable(descriptor: ParcelFileDescriptor): Boolean = try {
+        Os.lseek(descriptor.fileDescriptor, 0, OsConstants.SEEK_CUR)
+        true
+    } catch (e: ErrnoException) {
+        false
+    }
+
+    private fun copyToTemporaryFile(descriptor: ParcelFileDescriptor): File {
+        temporaryDir.mkdirs()
+        val file = File(temporaryDir, "${UUID.randomUUID()}.pdf")
+        // AutoCloseInputStream closes the descriptor once the copy is done.
+        ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { input ->
+            file.outputStream().use { output -> input.copyTo(output) }
+        }
+        return file
+    }
 }
 
 private class RendererDocument(
     private val renderer: PdfRenderer,
-    private val descriptor: ParcelFileDescriptor
+    private val descriptor: ParcelFileDescriptor,
+    private val temporaryFile: File?
 ) : PdfDocument {
     private val lock = Any()
     private var closed = false
@@ -82,6 +126,8 @@ private class RendererDocument(
             closed = true
             renderer.close()
             descriptor.close()
+            // The temporary copy only lives as long as the document is open.
+            temporaryFile?.delete()
         }
     }
 }

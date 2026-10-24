@@ -14,7 +14,8 @@ import kotlinx.coroutines.launch
 
 sealed interface UiState {
     class Home(val error: OpenError? = null) : UiState
-    class Reader(val document: PdfDocument) : UiState
+    // external: the document was opened by another app, so Back returns to that app.
+    class Reader(val document: PdfDocument, val external: Boolean) : UiState
 }
 
 // Holds the open document across rotations (SPEC F-2.6).
@@ -22,12 +23,16 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
     private val _state = MutableStateFlow<UiState>(UiState.Home())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
-    fun open(uri: Uri) {
+    init {
+        container.engine.clearTemporaryCopies()
+    }
+
+    fun open(uri: Uri, external: Boolean = false) {
         viewModelScope.launch {
             when (val result = container.engine.open(container.context, uri)) {
                 is OpenResult.Opened -> {
                     closeCurrent()
-                    _state.value = UiState.Reader(result.document)
+                    _state.value = UiState.Reader(result.document, external)
                 }
                 is OpenResult.Failed -> {
                     closeCurrent()
