@@ -69,16 +69,16 @@ Session unique (0).
 - [x] Mettre à jour `SPEC.md` (retirer le `[À DÉCIDER]` du §6, mettre à jour les `[À VÉRIFIER]` tranchés).
 
 ### Session 1b — Ouverture et affichage
-- [ ] Interface du moteur dans `system/` (le reste de l'app n'en dépend pas directement).
-- [ ] Accueil minimal : titre, action « Ouvrir un fichier » (F-1.1).
-- [ ] Sélecteur système filtré sur `application/pdf` ; autorisation persistante demandée.
-- [ ] Lecteur : défilement vertical continu, ajustement à la largeur, espace noir entre pages (F-2.1 à F-2.3).
-- [ ] Rendu à la demande, hors fil principal, page vide de bonne proportion pendant le rendu (F-2.5).
-- [ ] Cache d'images borné, valeur provisoire (T-6).
-- [ ] Plein écran immersif (F-2.4).
-- [ ] Retour : ramène à l'accueil (F-6.4, version simple).
-- [ ] Messages d'erreur de base, sans plantage (F-1.5).
-- [ ] Rotation : page conservée (F-2.6).
+- [x] Interface du moteur dans `system/` (le reste de l'app n'en dépend pas directement).
+- [x] Accueil minimal : titre, action « Ouvrir un fichier » (F-1.1).
+- [x] Sélecteur système filtré sur `application/pdf` ; autorisation persistante demandée.
+- [x] Lecteur : défilement vertical continu, ajustement à la largeur, espace noir entre pages (F-2.1 à F-2.3).
+- [x] Rendu à la demande, hors fil principal, page vide de bonne proportion pendant le rendu (F-2.5).
+- [x] Cache d'images borné, valeur provisoire (T-6).
+- [x] Plein écran immersif (F-2.4).
+- [x] Retour : ramène à l'accueil (F-6.4, version simple).
+- [x] Messages d'erreur de base, sans plantage (F-1.5).
+- [x] Rotation : page conservée (F-2.6).
 
 ### Session 1c — Zoom
 - [ ] Pincement entre ×1 et le maximum décidé, déplacement libre (F-3.1).
@@ -87,14 +87,14 @@ Session unique (0).
 - [ ] Tests unitaires `domain/` : cycle de zoom, calcul de la résolution de rendu, page courante.
 
 **Liste de contrôle sur l'appareil (jalon 1)**
-- [ ] Ouvrir le document 1 depuis « Mes fichiers » via le sélecteur : affichage correct, défilement fluide.
+- [x] Ouvrir le document 1 depuis « Mes fichiers » via le sélecteur : affichage correct, défilement fluide.
 - [ ] Double toucher sur la colonne droite du document 1 : la colonne remplit l'écran ; second double toucher : retour à la largeur.
 - [ ] Pincement jusqu'au maximum : texte net après le geste.
-- [ ] Document 4 : pages de formats mixtes non déformées.
-- [ ] Document 2 (long) : défilement sans plantage jusqu'à la dernière page.
-- [ ] Document 8 (non PDF) : message, pas de plantage.
-- [ ] Rotation au milieu d'un document : même page.
-- [ ] Annuler le sélecteur : retour à l'accueil sans message.
+- [x] Document 4 : pages de formats mixtes non déformées.
+- [x] Document 2 (long) : défilement sans plantage jusqu'à la dernière page.
+- [x] Document 8 (non PDF) : message, pas de plantage.
+- [x] Rotation au milieu d'un document : même page.
+- [x] Annuler le sélecteur : retour à l'accueil sans message.
 - [ ] Aucune permission dans « Infos sur l'application » ; contrôle `apkanalyzer` passé.
 
 ---

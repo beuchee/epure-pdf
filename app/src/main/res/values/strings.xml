@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Épure PDF</string>
+
+    <string name="open_file">Ouvrir un fichier</string>
+    <string name="error_not_found">Fichier introuvable.</string>
+    <string name="error_access_revoked">Accès au fichier retiré.</string>
+    <string name="error_password_required">Ce document est protégé par un mot de passe et ne peut pas être ouvert.</string>
+    <string name="error_unreadable">Ce fichier n\'est pas un PDF lisible.</string>
+    <string name="page_unreadable">Page illisible</string>
+    <plurals name="page_description">
+        <item quantity="other">Page %1$d sur %2$d</item>
+    </plurals>
 </resources>

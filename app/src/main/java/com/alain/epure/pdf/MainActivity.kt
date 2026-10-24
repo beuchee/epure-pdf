@@ -6,14 +6,27 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Modifier
-import com.alain.epure.pdf.ui.theme.Black
+import androidx.activity.viewModels
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.ViewModelProvider
+import com.alain.epure.pdf.ui.AppViewModel
+import com.alain.epure.pdf.ui.HomeScreen
+import com.alain.epure.pdf.ui.ReaderScreen
+import com.alain.epure.pdf.ui.UiState
 import com.alain.epure.pdf.ui.theme.EpureTheme
 
 class MainActivity : ComponentActivity() {
+    private val container by lazy { AppContainer(applicationContext) }
+
+    private val viewModel: AppViewModel by viewModels {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T =
+                AppViewModel(container) as T
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // The app is always dark, whatever the system theme: light system icons on black.
@@ -23,8 +36,15 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             EpureTheme {
-                // Empty black screen for now; the home screen comes in session 1b.
-                Box(modifier = Modifier.fillMaxSize().background(Black))
+                val state by viewModel.state.collectAsState()
+                when (val current = state) {
+                    is UiState.Home -> HomeScreen(error = current.error, onOpen = viewModel::open)
+                    is UiState.Reader -> ReaderScreen(
+                        document = current.document,
+                        cache = container.pageCache,
+                        onBack = viewModel::closeReader
+                    )
+                }
             }
         }
     }
