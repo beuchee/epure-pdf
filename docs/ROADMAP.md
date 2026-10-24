@@ -60,13 +60,13 @@ Session unique (0).
 **À trancher avant** : moteur de rendu (`SPEC.md` §6, à l'issue de 1a) ; zoom maximal (F-3.1) ; cycle du double toucher (F-3.2) ; verrouillage d'orientation (F-2.6).
 
 ### Session 1a — Prototype comparatif des moteurs
-- [ ] Prototype jetable (branche séparée) avec PdfRenderer (option A).
-- [ ] Même prototype avec androidx.pdf (option B) : statut, `minSdk`, dépendances, manifeste fusionné.
-- [ ] Mesures sur le jeu de test : poids de l'APK, temps d'ouverture (documents 1, 2, 9), mémoire, fidélité du rendu (1, 3, 4, 10).
-- [ ] Vérifier sur l'appareil : recherche de texte, mot de passe, sommaire, pour chaque option.
-- [ ] Option C étudiée seulement si A et B sont insuffisants (licence, poids, code natif).
-- [ ] Entrée `DECISIONS.md` : moteur retenu, mesures, fonctions conditionnelles F-11, F-13, F-14.1 confirmées ou écartées.
-- [ ] Mettre à jour `SPEC.md` (retirer le `[À DÉCIDER]` du §6, mettre à jour les `[À VÉRIFIER]` tranchés).
+- [x] Prototype jetable (branche séparée) avec PdfRenderer (option A).
+- [x] Même prototype avec androidx.pdf (option B) : statut, `minSdk`, dépendances, manifeste fusionné.
+- [x] Mesures sur le jeu de test : poids de l'APK, temps d'ouverture (documents 1, 2, 9), mémoire, fidélité du rendu (1, 3, 4, 10).
+- [x] Vérifier sur l'appareil : recherche de texte, mot de passe, sommaire, pour chaque option.
+- [x] Option C étudiée seulement si A et B sont insuffisants (licence, poids, code natif) — non nécessaire : A suffit (DEC-0015).
+- [x] Entrée `DECISIONS.md` : moteur retenu, mesures, fonctions conditionnelles F-11, F-13, F-14.1 confirmées ou écartées.
+- [x] Mettre à jour `SPEC.md` (retirer le `[À DÉCIDER]` du §6, mettre à jour les `[À VÉRIFIER]` tranchés).
 
 ### Session 1b — Ouverture et affichage
 - [ ] Interface du moteur dans `system/` (le reste de l'app n'en dépend pas directement).
