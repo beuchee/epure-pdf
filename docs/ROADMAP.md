@@ -36,18 +36,18 @@
 
 Session unique (0).
 
-- [ ] Créer le projet Android Studio : Kotlin, Compose, `minSdk` 31, `targetSdk` / `compileSdk` 36, `applicationId` `com.alain.epure.pdf`, nom technique `EpurePdf`.
-- [ ] `app_name` = « Épure PDF » dans `strings.xml`.
-- [ ] Reprendre le thème d'Épure : `Color.kt` (trois jetons), `Theme.kt` (schéma sombre), `Type.kt` (échelle en `sp`), `themes.xml` (fond noir, pas de flash blanc).
-- [ ] Créer les paquets `ui/`, `data/`, `system/`, `domain/` et la classe `AppContainer`.
-- [ ] Manifeste : une seule activité, `allowBackup="false"`, aucune permission.
-- [ ] `LICENSE` (GPL v3) et `.gitignore` Android vérifié (`*.jks`, `*.keystore`, `local.properties`, `*.pdf` hors dossier de test autorisé).
-- [ ] `docs/` : `SPEC.md`, `ROADMAP.md`, `DECISIONS.md` (modèle d'entrée en tête), `CHARTE.md` (Partie A reprise, Partie B propre à Épure PDF).
-- [ ] `CLAUDE.md` à la racine : choix techniques figés, règle « aucune permission `INTERNET` » avec la commande de contrôle, règles du dépôt public, commandes de build, consigne de lire `SPEC.md` et `ROADMAP.md` avant toute tâche, travail limité au jalon en cours.
-- [ ] README : présentation, section Confidentialité (pas d'accès à Internet, permission absente du manifeste, données sur l'appareil), licence.
-- [ ] Constituer le jeu de PDF de test **hors du dépôt** (`SPEC.md` annexe A).
-- [ ] Premier build, tests, lint ; app vide lancée sur l'appareil (écran noir, aucun flash blanc).
-- [ ] Premier commit (adresse « noreply »). Pas de `git push` sans demande explicite.
+- [x] Créer le projet Android Studio : Kotlin, Compose, `minSdk` 31, `targetSdk` / `compileSdk` 36, `applicationId` `com.alain.epure.pdf`, nom technique `EpurePdf`.
+- [x] `app_name` = « Épure PDF » dans `strings.xml`.
+- [x] Reprendre le thème d'Épure : `Color.kt` (trois jetons), `Theme.kt` (schéma sombre), `Type.kt` (échelle en `sp`), `themes.xml` (fond noir, pas de flash blanc).
+- [x] Créer les paquets `ui/`, `data/`, `system/`, `domain/` et la classe `AppContainer`.
+- [x] Manifeste : une seule activité, `allowBackup="false"`, aucune permission.
+- [x] `LICENSE` (GPL v3) et `.gitignore` Android vérifié (`*.jks`, `*.keystore`, `local.properties`, `*.pdf` hors dossier de test autorisé).
+- [x] `docs/` : `SPEC.md`, `ROADMAP.md`, `DECISIONS.md` (modèle d'entrée en tête), `CHARTE.md` (Partie A reprise, Partie B propre à Épure PDF).
+- [x] `CLAUDE.md` à la racine : choix techniques figés, règle « aucune permission `INTERNET` » avec la commande de contrôle, règles du dépôt public, commandes de build, consigne de lire `SPEC.md` et `ROADMAP.md` avant toute tâche, travail limité au jalon en cours.
+- [x] README : présentation, section Confidentialité (pas d'accès à Internet, permission absente du manifeste, données sur l'appareil), licence.
+- [x] Constituer le jeu de PDF de test **hors du dépôt** (`SPEC.md` annexe A).
+- [x] Premier build, tests, lint ; app vide lancée sur l'appareil (écran noir, aucun flash blanc).
+- [x] Premier commit (adresse « noreply »). Pas de `git push` sans demande explicite.
 
 **Liste de contrôle sur l'appareil**
 - [x] L'app s'installe et s'ouvre sur un écran noir.

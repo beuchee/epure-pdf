@@ -311,6 +311,35 @@ Facile : passer `compileSdk` à 37 et remonter les deux versions de bibliothèqu
 
 ---
 
+## DEC-0013 — Permission automatique `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` tolérée
+
+- Date : 24/10/2026
+- Statut : Adoptée
+- Jalon : 0
+- Exigences concernées : T-1, DEC-0005
+
+**Contexte**
+Le contrôle `aapt2 dump permissions` sur le APK liste une permission, `com.alain.epure.pdf.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`. Elle est ajoutée automatiquement par le plugin Android, sans être demandée dans le manifeste source. Épure en a une aussi.
+
+**Options**
+- (a) La tolérer, comme le fait le plugin Android pour toutes les apps.
+- (b) La retirer avec `tools:node="remove"` : non testé, et son retrait pourrait affecter le fonctionnement interne d'Android.
+
+**Décision**
+(a). Exception documentée à la règle « aucune permission » : c'est une permission propre à l'app, définie par elle-même.
+
+**Justification**
+Elle protège les messages internes de l'app : seule Épure PDF peut les recevoir. Elle n'accorde aucun accès aux données, ni à d'autres apps, et n'apparaît pas dans « Autorisations » de « Infos sur l'application ». Le contrôle sur l'appareil reste donc valable.
+
+**Conséquences**
+- Le contrôle `aapt2` (ou `apkanalyzer`) listera cette permission, et c'est attendu. Toute autre permission reste interdite.
+- À réévaluer si Android change le comportement de cette permission.
+
+**Réversibilité**
+Facile : retirer la permission par `tools:node="remove"` et refaire le contrôle sur l'appareil.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).
