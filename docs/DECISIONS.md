@@ -417,6 +417,35 @@ Moyenne. Un passage à androidx.pdf reste possible : il suffit d'écrire une sec
 
 ---
 
+## DEC-0016 — Rotation : suivre le réglage système
+
+- Date : 25/10/2026
+- Statut : Adoptée
+- Jalon : 1
+- Exigences concernées : F-2.6
+
+**Contexte**
+F-2.6 laissait ouverte la question d'un verrouillage d'orientation propre à l'app.
+
+**Options**
+- (a) Suivre le réglage de rotation du système ; la page en cours est conservée.
+- (b) Verrouiller l'orientation dans le lecteur.
+
+**Décision**
+(a). Pas de verrouillage propre à l'app.
+
+**Justification**
+Principe « Respect du système » (CHARTE A.1) : le réglage rapide de One UI suffit. Le verrouillage ajouterait une option sans besoin constaté.
+
+**Conséquences**
+- Aucune orientation fixée dans le manifeste.
+- La page en cours doit rester la même après une rotation (contrôle sur l'appareil, jalon 1b).
+
+**Réversibilité**
+Facile.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).

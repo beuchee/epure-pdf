@@ -107,7 +107,7 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 
 **F-2.5 Rendu à la demande.** Seules les pages visibles et leurs voisines immédiates sont rendues. Pendant le rendu, la page est un rectangle de la bonne proportion, couleur de page unie, sans indicateur animé (`CHARTE.md` A.6, « Pendant une action »).
 
-**F-2.6 Rotation.** La rotation de l'écran conserve la page en cours. La rotation suit le réglage système. **[À DÉCIDER]** Proposer un verrouillage d'orientation propre à l'app : proposition, non (le réglage rapide One UI suffit — principe « Respect du système »).
+**F-2.6 Rotation.** La rotation de l'écran conserve la page en cours. La rotation suit le réglage système. **[Décidé : DEC-0016]** Pas de verrouillage d'orientation propre à l'app : le réglage rapide One UI suffit (principe « Respect du système »).
 
 ### F-3 Zoom
 
