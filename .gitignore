@@ -1,0 +1,18 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+/.kotlin
+
+# Signing keys and their passwords: never committed
+*.jks
+*.keystore
+
+# Personal or copyrighted PDFs: the test set lives outside the repository
+*.pdf
