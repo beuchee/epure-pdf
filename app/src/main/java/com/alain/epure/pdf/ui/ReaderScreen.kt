@@ -7,39 +7,66 @@ import android.view.WindowInsetsController
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.alain.epure.pdf.AppContainer
 import com.alain.epure.pdf.PageKey
 import com.alain.epure.pdf.R
 import com.alain.epure.pdf.domain.LruByteCache
+import com.alain.epure.pdf.domain.MIN_ZOOM
+import com.alain.epure.pdf.domain.clampOffsetX
+import com.alain.epure.pdf.domain.clampZoom
+import com.alain.epure.pdf.domain.doubleTapTarget
+import com.alain.epure.pdf.domain.halfPageOffsetX
+import com.alain.epure.pdf.domain.offsetXForFocus
+import com.alain.epure.pdf.domain.renderWidthPx
+import com.alain.epure.pdf.domain.scrollOffsetForFocus
 import com.alain.epure.pdf.system.PageSize
 import com.alain.epure.pdf.system.PdfDocument
 import com.alain.epure.pdf.ui.theme.Black
 import com.alain.epure.pdf.ui.theme.LabelStyle
 import com.alain.epure.pdf.ui.theme.TextSecondary
+import kotlin.math.roundToInt
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-// Continuous vertical reader (SPEC F-2.1 to F-2.5).
+// Continuous vertical reader with zoom (SPEC F-2 and F-3).
 @Composable
 fun ReaderScreen(
     document: PdfDocument,
@@ -49,31 +76,105 @@ fun ReaderScreen(
     ImmersiveMode()
     BackHandler(onBack = onBack)
 
-    // Pages fit the screen width, with no side margin (SPEC F-2.2).
-    val density = LocalDensity.current
-    val widthPx = with(density) { LocalConfiguration.current.screenWidthDp.dp.roundToPx() }
+    BoxWithConstraints(modifier = Modifier.fillMaxSize().background(Black)) {
+        val viewportWidthDp = maxWidth
+        val viewportWidthPx = with(LocalDensity.current) { viewportWidthDp.roundToPx() }.toFloat()
+        val scope = rememberCoroutineScope()
+        val listState = rememberLazyListState()
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().background(Black),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(document.pageCount) { index ->
-            ReaderPage(document, index, widthPx, cache)
+        // scale follows the fingers at once; renderScale only changes once the zoom has settled.
+        var scale by remember { mutableFloatStateOf(MIN_ZOOM) }
+        var renderScale by remember { mutableFloatStateOf(MIN_ZOOM) }
+        var offsetX by remember { mutableFloatStateOf(0f) }
+
+        LaunchedEffect(scale) {
+            delay(RENDER_SETTLE_MS)
+            renderScale = scale
+        }
+
+        // The reading position survives a rotation as page + fraction of that page, because
+        // page heights change with the width (SPEC F-2.6).
+        var anchorPage by rememberSaveable { mutableIntStateOf(0) }
+        var anchorFraction by rememberSaveable { mutableFloatStateOf(0f) }
+
+        // Restore first, then track: tracking during the restore would overwrite the fraction.
+        LaunchedEffect(document) {
+            if (anchorPage != 0 || anchorFraction != 0f) {
+                val size = document.pageSize(anchorPage)
+                val heightPx = viewportWidthPx * size.height / size.width
+                listState.scrollToItem(anchorPage, (anchorFraction * heightPx).roundToInt())
+            }
+            snapshotFlow { listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset }
+                .collect { (index, offset) ->
+                    anchorPage = index
+                    val item = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == index }
+                    if (item != null && item.size > 0) anchorFraction = offset.toFloat() / item.size
+                }
+        }
+
+        // Keeps the point under the finger still under it when the zoom changes (SPEC F-3.2).
+        fun keepFocusStill(focusY: Float, factor: Float) {
+            val item = listState.layoutInfo.visibleItemsInfo.firstOrNull {
+                focusY >= it.offset && focusY < it.offset + it.size
+            } ?: return
+            scope.launch {
+                listState.scrollToItem(item.index, scrollOffsetForFocus(focusY, item.offset.toFloat(), factor))
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onDoubleTap = { position: Offset ->
+                            val target = doubleTapTarget(scale)
+                            keepFocusStill(position.y, target / scale)
+                            offsetX = if (target == MIN_ZOOM) {
+                                0f
+                            } else {
+                                halfPageOffsetX(position.x, viewportWidthPx, target)
+                            }
+                            scale = target
+                            renderScale = target
+                        }
+                    )
+                }
+                .pointerInput(Unit) {
+                    detectTransformGestures { centroid, pan, zoom, _ ->
+                        val oldScale = scale
+                        val newScale = clampZoom(oldScale * zoom)
+                        offsetX = clampOffsetX(
+                            offsetXForFocus(offsetX, centroid.x, oldScale, newScale) + pan.x,
+                            newScale,
+                            viewportWidthPx
+                        )
+                        if (newScale != oldScale) keepFocusStill(centroid.y, newScale / oldScale)
+                        scale = newScale
+                    }
+                }
+        ) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .requiredWidth(viewportWidthDp * scale)
+                    .offset { IntOffset(offsetX.roundToInt(), 0) },
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(document.pageCount) { index ->
+                    ReaderPage(document, index, viewportWidthPx.roundToInt(), renderScale, cache)
+                }
+            }
         }
     }
-}
-
-private sealed interface RenderState {
-    data object Loading : RenderState
-    class Ready(val bitmap: Bitmap) : RenderState
-    data object Failed : RenderState
 }
 
 @Composable
 private fun ReaderPage(
     document: PdfDocument,
     index: Int,
-    widthPx: Int,
+    viewportWidthPx: Int,
+    renderScale: Float,
     cache: LruByteCache<PageKey, Bitmap>
 ) {
     val size by produceState<PageSize?>(null, document, index) {
@@ -85,40 +186,49 @@ private fun ReaderPage(
     // Until the size is known, a standard A4 proportion keeps the layout stable.
     val ratio = pageSize?.let { it.width / it.height } ?: A4_RATIO
 
-    val render by produceState<RenderState>(RenderState.Loading, document, index, widthPx, pageSize) {
-        if (pageSize == null) return@produceState
-        val key = PageKey(index, widthPx)
+    // The last bitmap stays on screen while a sharper one is rendered (SPEC F-3.3).
+    var shown by remember(document, index) { mutableStateOf<Bitmap?>(null) }
+    var failed by remember(document, index) { mutableStateOf(false) }
+    val renderWidth = pageSize?.let {
+        renderWidthPx(viewportWidthPx, renderScale, it.height / it.width)
+    }
+
+    LaunchedEffect(document, index, renderWidth) {
+        if (renderWidth == null) return@LaunchedEffect
+        val key = PageKey(index, renderWidth)
         val cached = cache.get(key)
         if (cached != null) {
-            value = RenderState.Ready(cached)
-            return@produceState
+            shown = cached
+            failed = false
+            return@LaunchedEffect
         }
-        val bitmap = document.render(index, widthPx)
-        value = if (bitmap != null) {
+        val bitmap = document.render(index, renderWidth)
+        if (bitmap != null) {
             cache.put(key, bitmap)
-            RenderState.Ready(bitmap)
+            shown = bitmap
+            failed = false
         } else {
-            RenderState.Failed
+            failed = shown == null
         }
     }
 
-    val state = render
+    val bitmap = shown
     Box(
         modifier = Modifier.fillMaxWidth().aspectRatio(ratio),
         contentAlignment = Alignment.Center
     ) {
-        when (state) {
-            RenderState.Loading -> Box(Modifier.fillMaxSize().background(Color.White))
-            is RenderState.Ready -> Image(
-                bitmap = state.bitmap.asImageBitmap(),
+        when {
+            bitmap != null -> Image(
+                bitmap = bitmap.asImageBitmap(),
                 contentDescription = label,
                 modifier = Modifier.fillMaxSize()
             )
-            RenderState.Failed -> Text(
+            failed -> Text(
                 text = stringResource(R.string.page_unreadable),
                 style = LabelStyle,
                 color = TextSecondary
             )
+            else -> Box(Modifier.fillMaxSize().background(Color.White))
         }
     }
 }
@@ -137,3 +247,4 @@ private fun ImmersiveMode() {
 }
 
 private const val A4_RATIO = 595f / 842f
+private const val RENDER_SETTLE_MS = 250L

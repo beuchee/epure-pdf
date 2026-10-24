@@ -81,15 +81,15 @@ Session unique (0).
 - [x] Rotation : page conservée (F-2.6).
 
 ### Session 1c — Zoom
-- [ ] Pincement entre ×1 et le maximum décidé, déplacement libre (F-3.1).
-- [ ] Double toucher : cycle décidé, cadrage sur la colonne touchée (F-3.2).
-- [ ] Nouveau rendu net après le geste (F-3.3).
+- [x] Pincement entre ×1 et le maximum décidé, déplacement libre (F-3.1).
+- [x] Double toucher : cycle décidé, cadrage sur la colonne touchée (F-3.2).
+- [x] Nouveau rendu net après le geste (F-3.3).
 - [ ] Tests unitaires `domain/` : cycle de zoom, calcul de la résolution de rendu, page courante.
 
 **Liste de contrôle sur l'appareil (jalon 1)**
 - [x] Ouvrir le document 1 depuis « Mes fichiers » via le sélecteur : affichage correct, défilement fluide.
-- [ ] Double toucher sur la colonne droite du document 1 : la colonne remplit l'écran ; second double toucher : retour à la largeur.
-- [ ] Pincement jusqu'au maximum : texte net après le geste.
+- [x] Double toucher sur la colonne droite du document 1 : la colonne remplit l'écran ; second double toucher : retour à la largeur.
+- [x] Pincement jusqu'au maximum : texte net après le geste.
 - [x] Document 4 : pages de formats mixtes non déformées.
 - [x] Document 2 (long) : défilement sans plantage jusqu'à la dernière page.
 - [x] Document 8 (non PDF) : message, pas de plantage.
