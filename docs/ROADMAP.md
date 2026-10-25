@@ -110,15 +110,16 @@ Session unique (0).
 - [x] Retour depuis le lecteur ouvert par `VIEW` : retour à l'app d'origine.
 
 ### Session 2b — Récents et reprise
-- [ ] Persistance (`data/`) : récents, positions, réglages.
-- [ ] Liste des récents à l'accueil, ordre, limite, liste vide (F-4.1 à F-4.3).
-- [ ] Menu d'appui long : « Retirer de la liste » (libère l'autorisation, efface les données du document) (F-4.4). « Partager » viendra au jalon 3.
-- [ ] Récent illisible : traitement décidé (F-1.3).
-- [ ] Reprise à la dernière position, écriture différée (F-5).
-- [ ] Tests unitaires : limite des récents, identification secondaire, position hors limites (F-5.5).
+- [x] Persistance (`data/`, DataStore, DEC-0027) : dernier document, position de lecture.
+- [x] Accueil : le dernier document ouvert, avec « p. X / N », sous « Ouvrir un fichier » ; aucune entrée si rien n'a été ouvert (F-4.1, DEC-0024).
+- [x] Menu d'appui long : « Retirer de la liste » (libère l'autorisation, efface la position ; le fichier reste) (F-4.4, DEC-0025). « Partager » viendra au jalon 3.
+- [ ] Récent illisible : message « Fichier inaccessible… », entrée conservée (F-1.3, DEC-0021).
+- [x] Reprise à la dernière position, écriture différée après une pause de lecture (F-5).
+- [ ] Tests unitaires : identification par nom et taille, position hors limites (F-5.5).
 
 ### Session 2c — Paramètres et « À propos »
 - [ ] Écran Paramètres minimal avec « À propos » (F-15.2) : version, licence, dépôt, confidentialité, moteur et sa licence.
+- [ ] Réglage « Garder la liste des documents » (désactivé par défaut) et liste complète, limitée à 30 documents, à trancher à cette session (F-4.2, DEC-0024).
 
 **Liste de contrôle sur l'appareil (jalon 2)**
 - [ ] « Ouvrir avec » Épure PDF depuis « Mes fichiers », Samsung Email ou Gmail, Chrome (téléchargement) : le document s'ouvre.

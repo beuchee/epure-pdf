@@ -40,11 +40,22 @@ class MainActivity : ComponentActivity() {
         setContent {
             EpureTheme {
                 val state by viewModel.state.collectAsState()
+                val recent by viewModel.recent.collectAsState()
                 when (val current = state) {
-                    is UiState.Home -> HomeScreen(error = current.error, onOpen = { viewModel.open(it) })
+                    is UiState.Home -> HomeScreen(
+                        error = current.error,
+                        recentUnavailable = current.recentUnavailable,
+                        recent = recent,
+                        onOpen = { viewModel.open(it) },
+                        onOpenRecent = { viewModel.openRecent() },
+                        onRemoveRecent = { viewModel.removeRecent() }
+                    )
                     is UiState.Reader -> ReaderScreen(
                         document = current.document,
                         cache = container.pageCache,
+                        initialPage = current.page,
+                        initialFraction = current.fraction,
+                        onPosition = { page, fraction -> viewModel.onPosition(page, fraction) },
                         onBack = {
                             // A document opened by another app: Back returns to that app (DEC-0020).
                             if (current.external) finish() else viewModel.closeReader()

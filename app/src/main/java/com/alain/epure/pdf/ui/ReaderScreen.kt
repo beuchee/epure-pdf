@@ -70,6 +70,9 @@ import kotlinx.coroutines.launch
 fun ReaderScreen(
     document: PdfDocument,
     cache: LruByteCache<PageKey, Bitmap>,
+    initialPage: Int,
+    initialFraction: Float,
+    onPosition: (page: Int, fraction: Float) -> Unit,
     onBack: () -> Unit
 ) {
     ImmersiveMode()
@@ -93,8 +96,9 @@ fun ReaderScreen(
 
         // The reading position survives a rotation as page + fraction of that page, because
         // page heights change with the width (SPEC F-2.6).
-        var anchorPage by rememberSaveable { mutableIntStateOf(0) }
-        var anchorFraction by rememberSaveable { mutableFloatStateOf(0f) }
+        // Starts at the saved position when the document is opened again (SPEC F-5.2).
+        var anchorPage by rememberSaveable { mutableIntStateOf(initialPage) }
+        var anchorFraction by rememberSaveable { mutableFloatStateOf(initialFraction) }
 
         // Restore first, then track: tracking during the restore would overwrite the fraction.
         LaunchedEffect(document) {
@@ -108,6 +112,7 @@ fun ReaderScreen(
                     anchorPage = index
                     val item = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == index }
                     if (item != null && item.size > 0) anchorFraction = pageFraction(offset, item.size)
+                    onPosition(anchorPage, anchorFraction)
                 }
         }
 
