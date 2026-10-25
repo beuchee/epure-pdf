@@ -3,6 +3,7 @@ package com.alain.epure.pdf.system
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.pdf.LoadParams
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
@@ -13,6 +14,7 @@ import android.system.Os
 import android.system.OsConstants
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.createBitmap
+import com.alain.epure.pdf.domain.Tile
 import com.alain.epure.pdf.domain.pageHeightPx
 import java.io.File
 import java.io.FileNotFoundException
@@ -138,6 +140,30 @@ private class RendererDocument(
             }
         }
     }
+
+    override suspend fun renderTile(index: Int, widthPx: Int, heightPx: Int, tile: Tile): Bitmap? =
+        withContext(Dispatchers.IO) {
+            synchronized(lock) {
+                if (closed) return@withContext null
+                try {
+                    renderer.openPage(index).use { page ->
+                        // The page is scaled to the whole width, then moved so that the tile is at the top-left corner.
+                        val matrix = Matrix().apply {
+                            postScale(widthPx / page.width.toFloat(), heightPx / page.height.toFloat())
+                            postTranslate(-tile.left.toFloat(), -tile.top.toFloat())
+                        }
+                        val bitmap = createBitmap(tile.width, tile.height)
+                        bitmap.eraseColor(Color.WHITE)
+                        page.render(bitmap, null, matrix, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                        bitmap
+                    }
+                } catch (e: Exception) {
+                    null
+                } catch (e: OutOfMemoryError) {
+                    null
+                }
+            }
+        }
 
     // Null when the page cannot be drawn (SPEC F-14.2). Out-of-memory errors are left to the caller.
     private fun renderPage(index: Int, widthPx: Int): Bitmap? = try {

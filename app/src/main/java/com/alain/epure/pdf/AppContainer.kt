@@ -7,6 +7,7 @@ import com.alain.epure.pdf.data.BookmarkStore
 import com.alain.epure.pdf.data.RecentStore
 import com.alain.epure.pdf.data.SettingsStore
 import com.alain.epure.pdf.domain.LruByteCache
+import com.alain.epure.pdf.domain.Tile
 import com.alain.epure.pdf.system.PdfRendererEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +35,7 @@ class AppContainer(val context: Context) {
     )
 }
 
-data class PageKey(val page: Int, val widthPx: Int)
+// A whole page (tile = null) or one tile of it, at a given width (SPEC T-6, DEC-0040).
+data class PageKey(val page: Int, val widthPx: Int, val tile: Tile? = null)
 
 private const val TEMPORARY_DIR = "opened"

@@ -1047,6 +1047,33 @@ Moyenne pour les tuiles (nouveau moteur de rendu par morceaux) ; facile pour la 
 
 ---
 
+## DEC-0040 — Rendu par tuiles au zoom maximal
+
+- Date : 25/10/2026
+- Statut : Adoptée (décision du porteur, prise le 25/10/2026, après mesure sur l'appareil)
+- Jalon : 5 (session 5a)
+- Exigences concernées : F-3.3, F-14.3, T-6
+
+**Constat**
+Sur le document synthétique d'affiche A0 (`doc5-a0.pdf`, 2384 × 3370 pt), au zoom ×5, le texte de 9 points était à peine lisible. La limite de `MAX_BITMAP_PIXELS` (4 millions de pixels) ne permet de rendre qu'environ 1 700 px de large pour toute la page, soit moins d'un pixel par point. DEC-0039 prévoyait de revoir ce choix si la mesure le justifiait : c'est le cas.
+
+**Décision**
+Le rendu par tuiles est retenu. Au-delà de la limite, seule la partie visible de la page est rendue à la résolution du zoom, par morceaux de 512 px de côté. Le rendu réduit reste affiché pendant le rendu des tuiles (F-3.3).
+
+Conséquences de conception :
+- La limite de pixels continue de borner chaque image rendue entièrement ; les tuiles sont bornées par leur taille fixe.
+- La mémoire reste bornée par le cache d'octets (T-6) ; les tuiles hors écran ne sont pas rendues.
+- La logique de découpage est pure et testée dans `domain/`.
+
+**Conséquences**
+- DEC-0039 reste valable pour la poignée de défilement, mais son point sur les très grandes pages est remplacé par la présente décision.
+- `SPEC.md` T-6 et F-14.3 à aligner par le porteur (`CLAUDE.md` §5).
+
+**Réversibilité**
+Moyenne : le rendu par tuiles ajoute une seconde voie de rendu dans le lecteur.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).
