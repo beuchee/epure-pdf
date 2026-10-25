@@ -37,9 +37,9 @@ Lecteur PDF Android minimaliste, entièrement hors ligne. Lire sans distraction,
 - Après tout ajout ou mise à jour de dépendance, contrôler :
   ```
   ./gradlew assembleDebug
-  apkanalyzer manifest permissions app/build/outputs/apk/debug/app-debug.apk
+  $ANDROID_HOME/build-tools/<version>/aapt2 dump permissions app/build/outputs/apk/debug/app-debug.apk
   ```
-  (`apkanalyzer` : `$ANDROID_HOME/cmdline-tools/latest/bin/`). Résultat attendu : aucune permission, sauf celles du tableau `SPEC.md` §8.
+  (`aapt2` : `$ANDROID_HOME/build-tools/<version>/`, DEC-0032). Résultat attendu : aucune permission, sauf celles du tableau `SPEC.md` §8.
 - Permission injectée par une bibliothèque : la signaler, puis la retirer avec `tools:node="remove"` ou écarter la bibliothèque, avec entrée dans `DECISIONS.md`.
 
 ### Fichiers et permissions (DEC-0006, DEC-0007, DEC-0008)
@@ -95,7 +95,7 @@ Sous Windows : `gradlew.bat` au lieu de `./gradlew`.
 ## 9. Fin de tâche (`CHARTE.md` A.13)
 
 1. Build, tests et lint sans erreur (pas de nouvelle erreur de lint).
-2. Contrôle `apkanalyzer` des permissions.
+2. Contrôle `aapt2 dump permissions` des permissions.
 3. Donner au porteur du projet la liste de contrôle à passer sur l'appareil (reprise de `ROADMAP.md`).
 4. Proposer un message de commit, sans committer avant validation sur l'appareil.
 

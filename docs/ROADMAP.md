@@ -26,7 +26,7 @@
 1. `./gradlew assembleDebug` sans erreur.
 2. `./gradlew testDebugUnitTest` au vert.
 3. `./gradlew lint` sans nouvelle erreur.
-4. Manifeste fusionné sans `INTERNET` : `apkanalyzer manifest permissions app/build/outputs/apk/debug/app-debug.apk` ne liste aucune permission non prévue (`SPEC.md` §8).
+4. Manifeste fusionné sans `INTERNET` : `aapt2 dump permissions app/build/outputs/apk/debug/app-debug.apk` ne liste aucune permission non prévue (`SPEC.md` §8, DEC-0032).
 5. Liste de contrôle du jalon passée sur l'appareil.
 6. `git status` et contenu indexé relus ; commit en anglais, à l'impératif.
 
@@ -95,7 +95,7 @@ Session unique (0).
 - [x] Document 8 (non PDF) : message, pas de plantage.
 - [x] Rotation au milieu d'un document : même page.
 - [x] Annuler le sélecteur : retour à l'accueil sans message.
-- [ ] Aucune permission dans « Infos sur l'application » ; contrôle `apkanalyzer` passé.
+- [ ] Aucune permission dans « Infos sur l'application » ; contrôle `aapt2` passé.
 
 ---
 

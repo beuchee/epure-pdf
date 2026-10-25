@@ -7,7 +7,7 @@
     <string name="error_access_revoked">Accès au fichier retiré.</string>
     <string name="error_password_required">Ce document est protégé par un mot de passe et ne peut pas être ouvert.</string>
     <string name="error_unreadable">Ce fichier n\'est pas un PDF lisible.</string>
-    <string name="error_recent_unavailable">Fichier inaccessible. Ouvre-le à nouveau depuis le sélecteur.</string>
+    <string name="error_recent_unavailable">Fichier inaccessible. Ouvre-le à nouveau depuis l\'application où il a été ouvert initialement.</string>
     <string name="remove_recent">Retirer de la liste</string>
     <string name="settings_title">Paramètres</string>
     <string name="keep_list">Liste des documents</string>

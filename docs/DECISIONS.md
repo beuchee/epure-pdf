@@ -154,7 +154,7 @@ L'app est hors ligne par principe. Une bibliothèque peut ajouter `INTERNET` au 
 
 **Décision**
 - `INTERNET` (et `ACCESS_NETWORK_STATE`) absentes du manifeste source **et** du manifeste fusionné.
-- Contrôle à chaque ajout ou mise à jour de dépendance (onglet « Merged Manifest », `apkanalyzer manifest permissions` sur l'APK).
+- Contrôle à chaque ajout ou mise à jour de dépendance avec aapt2.
 - Permission injectée : retrait par `tools:node="remove"`, ou bibliothèque écartée, avec entrée dans ce journal.
 
 **Justification**
@@ -332,7 +332,7 @@ Le contrôle `aapt2 dump permissions` sur le APK liste une permission, `com.alai
 Elle protège les messages internes de l'app : seule Épure PDF peut les recevoir. Elle n'accorde aucun accès aux données, ni à d'autres apps, et n'apparaît pas dans « Autorisations » de « Infos sur l'application ». Le contrôle sur l'appareil reste donc valable.
 
 **Conséquences**
-- Le contrôle `aapt2` (ou `apkanalyzer`) listera cette permission, et c'est attendu. Toute autre permission reste interdite.
+- Le contrôle `aapt2` listera cette permission, et c'est attendu. Toute autre permission reste interdite.
 - À réévaluer si Android change le comportement de cette permission.
 
 **Réversibilité**
@@ -556,7 +556,10 @@ Facile.
 Un document ouvert par `VIEW` peut ne plus être lisible plus tard, si le droit était temporaire.
 
 **Décision**
-(a) Le récent reste affiché, en `TextSecondary`. Au toucher : « Fichier inaccessible. Ouvre-le à nouveau depuis le sélecteur. » avec l'action « Ouvrir un fichier ». La position de lecture est conservée si le même fichier est rouvert (F-4.5).
+(a) Le récent reste affiché, en `TextSecondary`. Au toucher : « Fichier inaccessible. Ouvre-le à nouveau depuis l'application où il a été ouvert initialement. » avec l'action « Ouvrir un fichier ». La position de lecture est conservée si le même fichier est rouvert (F-4.5).
+
+**Modification du 25/10/2026 (porteur)**
+Le texte initial renvoyait vers le sélecteur, qui ne retrouve pas un fichier reçu par e-mail ou par téléchargement. Le message renvoie désormais vers l'application d'origine. Le reste de la décision est inchangé.
 
 **Justification**
 La liste des récents reste utile : un fichier déplacé ou un droit retiré n'efface pas la position de lecture.
@@ -839,6 +842,106 @@ Facile.
 **Conséquences**
 - Retour (F-6.4) : ferme la fenêtre ouverte, puis masque les commandes, puis quitte le lecteur.
 - F-6.2 et F-6.3 à mettre à jour dans `SPEC.md` et au §9.1.
+
+**Réversibilité**
+Facile.
+
+---
+
+## DEC-0032 — Contrôle des permissions avec aapt2
+
+- Date : 25/10/2026
+- Statut : Adoptée (choix du porteur)
+- Jalon : transversal (contrôle commun, `CLAUDE.md` §4 et §9)
+- Exigences concernées : aucune permission non prévue (`SPEC.md` §8), DEC-0005, DEC-0013
+
+**Contexte**
+Le contrôle des permissions du fichier APK était prévu avec `apkanalyzer`, un outil d'Android Studio. Son emplacement n'est pas le même selon l'installation, et il n'était pas vérifié sur le poste. `aapt2` est installé avec les outils de build (`build-tools`) que le projet utilise déjà pour compiler.
+
+**Options**
+- (a) `apkanalyzer manifest permissions` (`cmdline-tools`) : outil dédié, à installer et à localiser.
+- (b) `aapt2 dump permissions` (`build-tools`) : déjà présent, indispensable au build.
+
+**Décision**
+Le contrôle se fait avec `aapt2 dump permissions app/build/outputs/apk/debug/app-debug.apk`. `aapt2` se trouve dans `$ANDROID_HOME/build-tools/<version>/`.
+
+**Justification**
+Même information : les deux outils lisent le fichier APK final. `aapt2` est toujours présent avec le build, donc le contrôle ne dépend pas d'un outil supplémentaire. Le contrôle a été passé le 25/10/2026 avec `aapt2` : seule la permission `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` apparaît, ce qui est prévu par DEC-0013.
+
+**Conséquences**
+- `CLAUDE.md` (§4 et §9) et `ROADMAP.md` (contrôles communs, jalon 1) mis à jour.
+- `SPEC.md` §8 et `DECISIONS.md` (entrées antérieures) mentionnent encore `apkanalyzer` : à aligner par le porteur, `SPEC.md` ne doit pas être modifié par l'assistant (`CLAUDE.md` §5).
+
+**Réversibilité**
+Facile.
+
+---
+
+## DEC-0033 — Pas de copie durable des documents reçus
+
+- Date : 25/10/2026
+- Statut : Adoptée (choix du porteur)
+- Jalon : 2 (suite de DEC-0022)
+- Exigences concernées : F-1.3, F-1.4, T-2, DEC-0008, DEC-0021, DEC-0022
+
+**Contexte**
+Un document reçu par `VIEW` (pièce jointe, téléchargement) peut devenir inaccessible après redémarrage. Une option « garder une copie » a été proposée pour le rouvrir depuis les récents.
+
+**Options**
+- (a) Pas de copie durable : la copie temporaire de DEC-0022 est effacée à la fermeture et au démarrage ; un récent devenu inaccessible affiche le message de DEC-0021.
+- (b) Option « garder les copies » dans Paramètres, désactivée par défaut, avec taille maximale et suppression au retrait du récent.
+
+**Décision**
+(a). Aucune copie durable du contenu d'un document n'est ajoutée. L'option (b) n'est pas retenue.
+
+**Justification**
+Le principe du projet est que le contenu des documents n'est pas stocké (T-2, DEC-0008). Une copie durable l'enfreindrait, même derrière une option. Le coût est limité : le récent indique où rouvrir le fichier.
+
+**Conséquences**
+- Aucun changement de code.
+- Le réglage « garder les copies » ne figure ni dans `SPEC.md` ni dans les réglages.
+
+**Réversibilité**
+Moyenne : une option (b) demanderait une nouvelle décision, une mise à jour de T-2 et de `SPEC.md`, et la gestion de la taille du cache.
+
+---
+
+## DEC-0034 — Résultats des tests sur l'appareil : droits reçus par `VIEW`
+
+- Date : 25/10/2026
+- Statut : Adoptée (constat sur l'appareil, SM-A536B, Android 16)
+- Jalon : 2 (session 2a)
+- Exigences concernées : F-1.3, F-1.4, DEC-0021, DEC-0022
+
+**Constats**
+- F-1.3 : le droit reçu par « Ouvrir avec » sur un PDF ouvert depuis « Mes fichiers » n'est pas persistant. Le récent n'est alors plus lisible et affiche « Fichier inaccessible » (DEC-0021).
+- F-1.4 : pas encore testé. Restent à vérifier : une pièce jointe Gmail, un téléchargement Chrome, et les autres sources, pour savoir lesquelles fournissent un flux non repositionnable.
+
+**Conséquences**
+- Le récent issu de « Mes fichiers » suit DEC-0021 ; aucun changement de code.
+- La case de la session 2a dans `ROADMAP.md` reste ouverte jusqu'au test F-1.4.
+
+**Réversibilité**
+Sans objet : constat à mettre à jour après chaque nouveau test.
+
+---
+
+## DEC-0035 — Choix préalables au jalon 4 (marque-pages et recherche)
+
+- Date : 25/10/2026
+- Statut : Adoptée (choix du porteur)
+- Jalon : 4 (à consigner avant 4a et 4b)
+- Exigences concernées : F-10.2, F-10.3, F-11.2, F-11.4, F-11.5
+
+**Décision**
+- Marque-pages (F-10.2) : le marque-page est le numéro de page seul, sans libellé saisi.
+- Recherche (F-11.2) : insensible aux accents si le moteur le permet ; sinon, recherche exacte. À vérifier en session 4b.
+- Signalement (F-11.4) : rectangle gris translucide sur l'occurrence. Aucune couleur d'accent.
+- Compteur (F-11.5) : affiché à la fin de la recherche, sans mise à jour pendant la recherche.
+- Retrait d'un marque-page (F-10.3) : immédiat, sans confirmation, comme pour un récent (DEC-0025).
+
+**Conséquences**
+- `SPEC.md` §9.1 et les exigences F-10.2, F-10.3, F-11.2, F-11.4, F-11.5 à aligner par le porteur (`CLAUDE.md` §5).
 
 **Réversibilité**
 Facile.

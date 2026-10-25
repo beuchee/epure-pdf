@@ -85,8 +85,8 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 - **[Décidé : DEC-0020]** Comportement de la tâche Android (`launchMode`) quand un PDF est ouvert depuis une autre app : lecteur dans la tâche de l'app d'origine (comportement standard) ou dans la tâche d'Épure PDF. Proposition : comportement standard.
 
 **F-1.3 Limite des autorisations reçues par `VIEW`.** Une URI reçue par `VIEW` donne en général un droit **temporaire** : il n'est persistant que si l'app d'origine l'a permis. Conséquence : un tel fichier peut ne plus être lisible plus tard depuis les récents.
-- **[À VÉRIFIER]** Pour « Mes fichiers », Google Files, Samsung Email, Gmail, Chrome : le droit est-il persistant ?
-- **[Décidé : DEC-0021]** Traitement d'un récent devenu illisible : (a) l'afficher en `TextSecondary` avec, au toucher, « Fichier inaccessible. Ouvre-le à nouveau depuis le sélecteur. » et l'action « Ouvrir un fichier » ; (b) ne pas l'ajouter aux récents. Proposition : (a), la position de lecture étant retrouvée si le même fichier est rouvert (voir F-4.5).
+- **[Constaté : DEC-0034]** Pour « Mes fichiers » : le droit n'est pas persistant. **[À VÉRIFIER]** pour Google Files, Samsung Email, Gmail, Chrome.
+- **[Décidé : DEC-0021, texte modifié]** Traitement d'un récent devenu illisible : (a) l'afficher en `TextSecondary` avec, au toucher, « Fichier inaccessible. Ouvre-le à nouveau depuis l'application où il a été ouvert initialement. » et l'action « Ouvrir un fichier » ; (b) ne pas l'ajouter aux récents. Proposition : (a), la position de lecture étant retrouvée si le même fichier est rouvert (voir F-4.5).
 
 **F-1.4 Fichier non lisible directement.** Le moteur de rendu (PdfRenderer notamment) exige un descripteur de fichier sur lequel il peut se déplacer librement. Certaines apps fournissent un flux non repositionnable (pièces jointes, fichiers en cours de téléchargement).
 - **[À VÉRIFIER]** Quelles sources fournissent un descripteur non repositionnable.
@@ -201,9 +201,9 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 
 **F-10.1** Action « Marque-page » dans les commandes : ajoute la page courante ; si elle est déjà marquée, l'action devient « Retirer le marque-page ». Un marque-page = un numéro de page.
 
-**F-10.2** **[À DÉCIDER]** Libellé facultatif saisi par l'utilisateur. Proposition : non (numéro seul), à réévaluer à l'usage.
+**F-10.2** **[Décidé : DEC-0035]** Le marque-page est le numéro de page seul, sans libellé saisi.
 
-**F-10.3** Écran « Marque-pages » : liste « Page 12 », « Page 31 »… triée par page ; appui court = aller à la page ; appui long = « Retirer ». Liste vide : « Aucun marque-page ».
+**F-10.3** Écran « Marque-pages » : liste « Page 12 », « Page 31 »… triée par page ; appui court = aller à la page ; appui long = « Retirer ». Liste vide : « Aucun marque-page ». Le retrait est immédiat, sans confirmation **[Décidé : DEC-0035]**.
 
 **F-10.4** Les marque-pages sont stockés localement, par document (voir section 7). Ils ne sont pas écrits dans le fichier PDF.
 
@@ -213,13 +213,13 @@ Fonction **conditionnelle** : livrée seulement si le moteur retenu au jalon 1 p
 
 **F-11.1** Action « Rechercher » : champ de recherche (`CHARTE.md` A.6), clavier ouvert à l'arrivée. Entrée = lancer la recherche.
 
-**F-11.2** Recherche insensible à la casse ; **[À DÉCIDER]** insensible aux accents (cohérent avec Épure, mais dépend des capacités du moteur).
+**F-11.2** Recherche insensible à la casse ; **[Décidé : DEC-0035]** insensible aux accents si le moteur le permet, sinon recherche exacte (**[À VÉRIFIER]** en session 4b).
 
 **F-11.3** Résultat : saut à la première occurrence, occurrence signalée sur la page ; compteur « 3 / 17 » ; actions « Précédent » et « Suivant ». Aucun résultat : « Aucun résultat ».
 
-**F-11.4** **[À DÉCIDER]** Rendu du signalement sur la page : la charte n'a aucune couleur d'accent. Options : rectangle gris translucide, cadre 2 dp en `TextSecondary` ou noir. Dérogation à consigner si une couleur est introduite.
+**F-11.4** **[Décidé : DEC-0035]** Rectangle gris translucide sur l'occurrence. Aucune couleur d'accent, donc aucune dérogation à la charte.
 
-**F-11.5** Sur un document long, la recherche ne bloque pas l'interface ; elle peut être interrompue par Retour. Aucun indicateur animé ; le compteur se met à jour à la fin, ou au fil de l'eau (**[À DÉCIDER]**).
+**F-11.5** Sur un document long, la recherche ne bloque pas l'interface ; elle peut être interrompue par Retour. Aucun indicateur animé ; le compteur est affiché à la fin de la recherche (**[Décidé : DEC-0035]**).
 
 **F-11.6** PDF sans couche texte (scan) : « Ce document ne contient pas de texte. » Pas de reconnaissance de caractères (OCR).
 
@@ -272,7 +272,7 @@ Listés dans les fonctions proposées, absents de la feuille de route. Points à
 
 **T-1 Aucune permission `INTERNET`.**
 - Absente du manifeste source et du **manifeste fusionné**.
-- Contrôle à chaque ajout ou mise à jour de dépendance : onglet « Merged Manifest » d'Android Studio, et sur l'APK produit `apkanalyzer manifest permissions app-debug.apk` (outil du SDK Android).
+- Contrôle à chaque ajout ou mise à jour de dépendance par aapt2.
 - Une permission injectée par une bibliothèque est retirée par `tools:node="remove"`, ou la bibliothèque est écartée (décision consignée).
 - `ACCESS_NETWORK_STATE` est traitée de la même manière.
 
@@ -376,7 +376,7 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 | F-3.2 | Cycle du double toucher | 1 | Largeur → demi-page → largeur |
 | F-4.1 | Taille du nom dans les récents | 2 | Décidé : 20 sp, dérogation (DEC-0023) |
 | F-4.2 | Historique facultatif | 2 | Décidé : dernier document seul ; liste facultative, désactivée par défaut (DEC-0024) ; limite de la liste à fixer en 2c |
-| F-4.4 | Confirmation du retrait | 4a | Décidé pour 2b : pas de confirmation (DEC-0025) ; à trancher en 4a |
+| F-4.4, F-10.3 | Confirmation du retrait | 4 | Décidé : pas de confirmation, pour les récents (DEC-0025) et pour les marque-pages (DEC-0035) |
 | F-4.5 | Identification secondaire (nom) | 2 | Décidé : oui, sur le nom seul (DEC-0023, modifiée par le porteur) |
 | F-5.3 | Mémoriser le zoom | 2 | Décidé : non (DEC-0026) |
 | F-6.2 | Délai de masquage des commandes | 3 | 4 s |
@@ -385,10 +385,10 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 | F-7.3 | Poignée de défilement rapide | 5 | À évaluer |
 | F-8.3 | Mode nuit global ou par document | 3 | Global |
 | F-9.2 | Écran allumé par défaut | 3 | Décidé : activé (DEC-0030) |
-| F-10.2 | Libellé des marque-pages | 4 | Non |
-| F-11.2 | Recherche insensible aux accents | 4 | Selon le moteur |
-| F-11.4 | Couleur du signalement de recherche | 4 | Gris translucide |
-| F-11.5 | Compteur au fil de l'eau | 4 | Selon le moteur |
+| F-10.2 | Libellé des marque-pages | 4 | Décidé : numéro seul (DEC-0035) |
+| F-11.2 | Recherche insensible aux accents | 4 | Décidé : si le moteur le permet (DEC-0035) |
+| F-11.4 | Couleur du signalement de recherche | 4 | Décidé : gris translucide (DEC-0035) |
+| F-11.5 | Compteur de résultats | 4 | Décidé : à la fin de la recherche (DEC-0035) |
 | F-14.1 | Mot de passe jamais enregistré | 5 | Oui |
 | F-16 | EPUB, CBZ, CBR | après 5 | Hors version 1 |
 | T-6 | Taille du cache, taille max d'image, tuiles | 1 puis 5 | Après mesure |
@@ -401,7 +401,7 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 |---|---|
 | §6 | PdfRenderer sous Android 16 / One UI 8 : extraction et recherche de texte, mot de passe, sommaire |
 | §6 | androidx.pdf : statut, `minSdk`, dépendances, permissions injectées, compatibilité Compose |
-| F-1.3 | Persistance des droits reçus par `VIEW` selon l'app d'origine |
+| F-1.3 | Persistance des droits reçus par `VIEW` : non persistante depuis « Mes fichiers » (DEC-0034) ; autres sources à vérifier |
 | F-1.4 | Sources fournissant un descripteur non repositionnable |
 | F-2.4 | Mode immersif sous One UI 8 |
 | F-4.2 | Limite système des autorisations persistantes |
