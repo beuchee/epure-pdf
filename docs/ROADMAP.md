@@ -155,8 +155,8 @@ Session unique (0).
 - [ ] Taille de police système au maximum : commandes lisibles, cibles utilisables, rien de coupé.
 - [ ] Aller à la page 150 du document 2 : saut immédiat ; saisir 999 : message.
 - [x] Mode nuit : pages inversées ; réglage conservé après fermeture.
-- [ ] Écran allumé activé : l'écran ne s'éteint pas pendant la lecture au-delà du délai de mise en veille ; il s'éteint normalement sur l'accueil.
-- [ ] Partager vers une messagerie : le fichier arrive intact.
+- [x] Écran allumé activé : l'écran ne s'éteint pas pendant la lecture au-delà du délai de mise en veille ; il s'éteint normalement sur l'accueil.
+- [x] Partager vers une messagerie : le fichier arrive intact.
 - [ ] TalkBack : commandes et pages annoncées.
 
 ---

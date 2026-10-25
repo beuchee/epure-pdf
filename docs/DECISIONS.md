@@ -797,6 +797,32 @@ Facile.
 
 ---
 
+## DEC-0030 — Écran allumé et partage d'un récent
+
+- Date : 25/10/2026
+- Statut : Adoptée (valeur par défaut « activé », décidée par le porteur)
+- Jalon : 3 (session 3b)
+- Exigences concernées : F-9.1, F-9.2, F-12.1, F-12.2
+
+**Contexte**
+Deux fonctions de la session 3b ne dépendent pas de la barre de commandes : l'écran allumé (réglage) et le partage depuis le menu d'appui long d'un récent. Le menu « Plus » du lecteur dépend de la session 3a et n'est pas traité ici.
+
+**Décision**
+- Réglage « Écran allumé pendant la lecture » dans Paramètres, activé par défaut (F-9.2, décision du porteur après validation sur l'appareil). Effet limité au lecteur : `View.keepScreenOn`, levé à la sortie du lecteur.
+- « Partager » dans le menu d'appui long d'un récent : `ACTION_SEND` avec un droit de lecture temporaire. Si le fichier ne peut pas être lu ici ou si aucune app ne peut le recevoir, message « Ce fichier ne peut pas être partagé depuis Épure PDF. » (F-12.2, à vérifier sur l'appareil selon les sources).
+
+**Justification**
+Ces deux fonctions ne demandent aucune permission. Le partage passe par le sélecteur système, sans réseau propre à l'app.
+
+**Conséquences**
+- Le partage depuis le menu « Plus » du lecteur reste à faire avec la session 3a.
+- F-12.2 : à vérifier sur l'appareil (pièces jointes, téléchargements, Mes fichiers).
+
+**Réversibilité**
+Facile.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).

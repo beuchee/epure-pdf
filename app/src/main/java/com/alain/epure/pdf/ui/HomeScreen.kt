@@ -26,12 +26,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.alain.epure.pdf.R
 import com.alain.epure.pdf.domain.RecentDocument
 import com.alain.epure.pdf.system.OpenError
+import com.alain.epure.pdf.system.shareDocument
 import com.alain.epure.pdf.ui.theme.AppNameStyle
 import com.alain.epure.pdf.ui.theme.Black
 import com.alain.epure.pdf.ui.theme.LabelStyle
@@ -53,8 +55,11 @@ fun HomeScreen(
         // Cancelling the picker returns null: stay on the home screen, without a message (SPEC F-1.1).
         if (uri != null) onOpen(uri)
     }
+    val context = LocalContext.current
     // The document whose long-press menu is open.
     var menuFor by remember { mutableStateOf<RecentDocument?>(null) }
+    // Set when a document could not be shared (SPEC F-12.2).
+    var shareUnavailable by remember { mutableStateOf(false) }
 
     // Without the optional list, only the last document is shown (DEC-0024).
     val shown = if (keepList) recents else recents.take(1)
@@ -85,6 +90,14 @@ fun HomeScreen(
             Spacer(Modifier.height(24.dp))
             Text(
                 text = stringResource(it),
+                style = LabelStyle,
+                color = TextSecondary
+            )
+        }
+        if (shareUnavailable) {
+            Spacer(Modifier.height(24.dp))
+            Text(
+                text = stringResource(R.string.share_unavailable),
                 style = LabelStyle,
                 color = TextSecondary
             )
@@ -132,6 +145,10 @@ fun HomeScreen(
                     color = TextPrimary
                 )
                 Spacer(Modifier.height(24.dp))
+                ActionRow(text = stringResource(R.string.share)) {
+                    menuFor = null
+                    shareUnavailable = !shareDocument(context, Uri.parse(document.uri), document.name)
+                }
                 ActionRow(text = stringResource(R.string.remove_recent)) {
                     menuFor = null
                     onRemoveRecent(document.uri)

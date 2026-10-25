@@ -76,9 +76,11 @@ fun ReaderScreen(
     initialFraction: Float,
     onPosition: (page: Int, fraction: Float) -> Unit,
     nightMode: Boolean,
+    keepScreenOn: Boolean,
     onBack: () -> Unit
 ) {
     ImmersiveMode()
+    KeepScreenOn(keepScreenOn)
     BackHandler(onBack = onBack)
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize().background(Black)) {
@@ -246,6 +248,17 @@ private fun ReaderPage(
             )
             else -> Box(Modifier.fillMaxSize().background(if (nightMode) Color.Black else Color.White))
         }
+    }
+}
+
+// The screen stays on while the reader is shown and the setting is on (SPEC F-9.1).
+// Leaving the reader restores the normal timeout.
+@Composable
+private fun KeepScreenOn(enabled: Boolean) {
+    val view = LocalView.current
+    DisposableEffect(view, enabled) {
+        view.keepScreenOn = enabled
+        onDispose { view.keepScreenOn = false }
     }
 }
 

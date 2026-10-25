@@ -53,6 +53,9 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
     private val _nightMode = MutableStateFlow(false)
     val nightMode: StateFlow<Boolean> = _nightMode.asStateFlow()
 
+    private val _keepScreenOn = MutableStateFlow(false)
+    val keepScreenOn: StateFlow<Boolean> = _keepScreenOn.asStateFlow()
+
     // URI of the document in the reader: its position is the one that gets saved.
     private var readerUri: String? = null
 
@@ -70,6 +73,15 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch {
             container.settings.nightMode.collect { _nightMode.value = it }
         }
+        viewModelScope.launch {
+            container.settings.keepScreenOn.collect { _keepScreenOn.value = it }
+        }
+    }
+
+    // While reading only (SPEC F-9.1): the reader applies it, not the other screens.
+    fun setKeepScreenOn(enabled: Boolean) {
+        _keepScreenOn.value = enabled
+        viewModelScope.launch { container.settings.setKeepScreenOn(enabled) }
     }
 
     // Night mode inverts the page colours on screen (SPEC F-8.1, F-8.4).

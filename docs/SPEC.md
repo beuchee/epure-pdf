@@ -195,7 +195,7 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 
 **F-9.1** Option « Écran allumé pendant la lecture », dans les paramètres et dans le menu « Plus ». Effet limité à l'écran du lecteur (`FLAG_KEEP_SCREEN_ON` sur la fenêtre). Aucune permission requise.
 
-**F-9.2** Valeur par défaut : désactivée (proposition **[À DÉCIDER]**).
+**F-9.2** Valeur par défaut : activée (décision du porteur, DEC-0030).
 
 ### F-10 Marque-pages
 
@@ -384,7 +384,7 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 | F-7.1 | Indicateur permanent | 3 | Non |
 | F-7.3 | Poignée de défilement rapide | 5 | À évaluer |
 | F-8.3 | Mode nuit global ou par document | 3 | Global |
-| F-9.2 | Écran allumé par défaut | 3 | Désactivé |
+| F-9.2 | Écran allumé par défaut | 3 | Décidé : activé (DEC-0030) |
 | F-10.2 | Libellé des marque-pages | 4 | Non |
 | F-11.2 | Recherche insensible aux accents | 4 | Selon le moteur |
 | F-11.4 | Couleur du signalement de recherche | 4 | Gris translucide |

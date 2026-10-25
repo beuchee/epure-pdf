@@ -31,8 +31,18 @@ class SettingsStore(private val context: Context) {
         context.settingsDataStore.edit { it[NIGHT_MODE] = enabled }
     }
 
+    // On by default (SPEC F-9.2, decided by the project owner). Keeps the screen on while reading only.
+    val keepScreenOn: Flow<Boolean> = context.settingsDataStore.data
+        .catch { emit(emptyPreferences()) }
+        .map { it[KEEP_SCREEN_ON] ?: true }
+
+    suspend fun setKeepScreenOn(enabled: Boolean) {
+        context.settingsDataStore.edit { it[KEEP_SCREEN_ON] = enabled }
+    }
+
     private companion object {
         val KEEP_LIST = booleanPreferencesKey("keep_list")
         val NIGHT_MODE = booleanPreferencesKey("night_mode")
+        val KEEP_SCREEN_ON = booleanPreferencesKey("keep_screen_on")
     }
 }

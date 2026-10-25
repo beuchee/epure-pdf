@@ -45,6 +45,7 @@ class MainActivity : ComponentActivity() {
                 val recents by viewModel.recents.collectAsState()
                 val keepList by viewModel.keepList.collectAsState()
                 val nightMode by viewModel.nightMode.collectAsState()
+                val keepScreenOn by viewModel.keepScreenOn.collectAsState()
                 when (val current = state) {
                     is UiState.Home -> HomeScreen(
                         error = current.error,
@@ -59,6 +60,8 @@ class MainActivity : ComponentActivity() {
                     is UiState.Settings -> SettingsScreen(
                         keepList = keepList,
                         onToggleKeepList = { viewModel.setKeepList(it) },
+                        keepScreenOn = keepScreenOn,
+                        onToggleKeepScreenOn = { viewModel.setKeepScreenOn(it) },
                         nightMode = nightMode,
                         onToggleNightMode = { viewModel.setNightMode(it) },
                         onAbout = { viewModel.showAbout() },
@@ -72,6 +75,7 @@ class MainActivity : ComponentActivity() {
                         initialFraction = current.fraction,
                         onPosition = { page, fraction -> viewModel.onPosition(page, fraction) },
                         nightMode = nightMode,
+                        keepScreenOn = keepScreenOn,
                         onBack = {
                             // A document opened by another app: Back returns to that app (DEC-0020).
                             if (current.external) finish() else viewModel.closeReader()
