@@ -50,6 +50,9 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
     private val _keepList = MutableStateFlow(false)
     val keepList: StateFlow<Boolean> = _keepList.asStateFlow()
 
+    private val _nightMode = MutableStateFlow(false)
+    val nightMode: StateFlow<Boolean> = _nightMode.asStateFlow()
+
     // URI of the document in the reader: its position is the one that gets saved.
     private var readerUri: String? = null
 
@@ -64,6 +67,15 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch {
             container.settings.keepList.collect { _keepList.value = it }
         }
+        viewModelScope.launch {
+            container.settings.nightMode.collect { _nightMode.value = it }
+        }
+    }
+
+    // Night mode inverts the page colours on screen (SPEC F-8.1, F-8.4).
+    fun setNightMode(enabled: Boolean) {
+        _nightMode.value = enabled
+        viewModelScope.launch { container.settings.setNightMode(enabled) }
     }
 
     fun open(uri: Uri, external: Boolean = false, fromRecent: Boolean = false) {

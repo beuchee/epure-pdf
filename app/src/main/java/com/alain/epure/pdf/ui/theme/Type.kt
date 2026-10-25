@@ -33,5 +33,11 @@ val LabelStyle = TextStyle(
     lineHeight = 28.sp
 )
 
-// Explanatory sentence under a setting: LabelStyle in italic.
-val NoteStyle = LabelStyle.copy(fontStyle = FontStyle.Italic)
+// Explanatory sentence under a setting: smaller than LabelStyle, in italic.
+val NoteStyle = TextStyle(
+    fontFamily = FontFamily.Default,
+    fontWeight = FontWeight.Normal,
+    fontStyle = FontStyle.Italic,
+    fontSize = 16.sp,
+    lineHeight = 22.sp
+)

@@ -36,6 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
@@ -73,6 +75,7 @@ fun ReaderScreen(
     initialPage: Int,
     initialFraction: Float,
     onPosition: (page: Int, fraction: Float) -> Unit,
+    nightMode: Boolean,
     onBack: () -> Unit
 ) {
     ImmersiveMode()
@@ -173,7 +176,7 @@ fun ReaderScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(document.pageCount) { index ->
-                    ReaderPage(document, index, viewportWidthPx.roundToInt(), renderScale, cache)
+                    ReaderPage(document, index, viewportWidthPx.roundToInt(), renderScale, cache, nightMode)
                 }
             }
         }
@@ -186,7 +189,8 @@ private fun ReaderPage(
     index: Int,
     viewportWidthPx: Int,
     renderScale: Float,
-    cache: LruByteCache<PageKey, Bitmap>
+    cache: LruByteCache<PageKey, Bitmap>,
+    nightMode: Boolean
 ) {
     val size by produceState<PageSize?>(null, document, index) {
         value = document.pageSize(index)
@@ -232,14 +236,15 @@ private fun ReaderPage(
             bitmap != null -> Image(
                 bitmap = bitmap.asImageBitmap(),
                 contentDescription = label,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                colorFilter = if (nightMode) NightFilter else null
             )
             failed -> Text(
                 text = stringResource(R.string.page_unreadable),
                 style = LabelStyle,
                 color = TextSecondary
             )
-            else -> Box(Modifier.fillMaxSize().background(Color.White))
+            else -> Box(Modifier.fillMaxSize().background(if (nightMode) Color.Black else Color.White))
         }
     }
 }
@@ -256,6 +261,19 @@ private fun ImmersiveMode() {
         onDispose { controller?.show(WindowInsets.Type.systemBars()) }
     }
 }
+
+// Night mode (SPEC F-8.1, F-8.4): inverts each colour, so white becomes black and black text becomes white.
+// It is a display filter: pages are not rendered again. Images are inverted too (SPEC F-8.2).
+private val NightFilter = ColorFilter.colorMatrix(
+    ColorMatrix(
+        floatArrayOf(
+            -1f, 0f, 0f, 0f, 255f,
+            0f, -1f, 0f, 0f, 255f,
+            0f, 0f, -1f, 0f, 255f,
+            0f, 0f, 0f, 1f, 0f
+        )
+    )
+)
 
 private const val A4_RATIO = 595f / 842f
 private const val RENDER_SETTLE_MS = 250L

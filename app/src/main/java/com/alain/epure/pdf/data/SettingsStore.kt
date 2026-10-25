@@ -22,7 +22,17 @@ class SettingsStore(private val context: Context) {
         context.settingsDataStore.edit { it[KEEP_LIST] = enabled }
     }
 
+    // Off by default. Applies to every document (SPEC F-8.3, DEC-0029).
+    val nightMode: Flow<Boolean> = context.settingsDataStore.data
+        .catch { emit(emptyPreferences()) }
+        .map { it[NIGHT_MODE] ?: false }
+
+    suspend fun setNightMode(enabled: Boolean) {
+        context.settingsDataStore.edit { it[NIGHT_MODE] = enabled }
+    }
+
     private companion object {
         val KEEP_LIST = booleanPreferencesKey("keep_list")
+        val NIGHT_MODE = booleanPreferencesKey("night_mode")
     }
 }

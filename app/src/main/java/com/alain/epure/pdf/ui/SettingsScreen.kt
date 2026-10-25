@@ -28,6 +28,8 @@ import com.alain.epure.pdf.ui.theme.TextSecondary
 fun SettingsScreen(
     keepList: Boolean,
     onToggleKeepList: (Boolean) -> Unit,
+    nightMode: Boolean,
+    onToggleNightMode: (Boolean) -> Unit,
     onAbout: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -55,6 +57,18 @@ fun SettingsScreen(
         )
         Text(
             text = stringResource(R.string.keep_list_help),
+            style = NoteStyle,
+            color = TextSecondary
+        )
+        Spacer(Modifier.height(24.dp))
+        ActionRow(text = stringResource(R.string.night_mode)) { onToggleNightMode(!nightMode) }
+        Text(
+            text = stringResource(if (nightMode) R.string.state_on else R.string.state_off),
+            style = LabelStyle,
+            color = TextSecondary
+        )
+        Text(
+            text = stringResource(R.string.night_mode_help),
             style = NoteStyle,
             color = TextSecondary
         )

@@ -771,6 +771,32 @@ Facile.
 
 ---
 
+## DEC-0029 — Mode nuit : inversion par filtre, réglage global dans Paramètres
+
+- Date : 25/10/2026
+- Statut : Adoptée (demande du porteur)
+- Jalon : 3 (session 3b), avancé à la demande du porteur
+- Exigences concernées : F-8.1, F-8.3, F-8.4, F-15.1
+
+**Contexte**
+Le mode nuit doit être accessible depuis les Paramètres. Le jalon 3 n'était pas encore commencé ; la session 2a conserve des points ouverts.
+
+**Décision**
+- Réglage « Mode nuit » dans Paramètres, désactivé par défaut, global : il vaut pour tous les documents (F-8.3 (a)).
+- Inversion des couleurs à l'affichage par filtre de couleur ; aucun nouveau rendu des pages (F-8.4). Images incluses (F-8.2).
+
+**Justification**
+Réglage unique et simple ; le filtre évite un nouveau rendu et ne touche pas au cache de pages.
+
+**Conséquences**
+- Le fond de rendu d'une page passe en noir en mode nuit.
+- `SPEC.md` F-8.3 et §9.1 à mettre à jour après validation sur l'appareil.
+
+**Réversibilité**
+Facile.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).

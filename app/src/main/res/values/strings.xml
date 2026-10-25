@@ -12,6 +12,8 @@
     <string name="settings_title">Paramètres</string>
     <string name="keep_list">Liste des documents</string>
     <string name="keep_list_help">Affiche jusqu\'à 10 documents récents à l\'accueil. Désactivé, seul le dernier document est gardé.</string>
+    <string name="night_mode">Mode nuit</string>
+    <string name="night_mode_help">Inverse les couleurs des pages : texte blanc sur fond noir. S\'applique à tous les documents.</string>
     <string name="state_on">Activé</string>
     <string name="state_off">Désactivé</string>
     <string name="no_recent">Aucun fichier récent</string>
