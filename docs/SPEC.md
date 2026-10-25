@@ -125,23 +125,22 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 
 ### F-4 Fichiers récents
 
-**F-4.1 Liste.** L'accueil affiche, sous « Ouvrir un fichier », les documents récents, du plus récent au plus ancien, en texte seul.
-- Ligne 1 : nom du fichier (`OpenableColumns.DISPLAY_NAME`), sans tronquer (passage à la ligne, `CHARTE.md` A.5).
+**F-4.1 Accueil.** L'accueil affiche, sous « Ouvrir un fichier », le dernier document ouvert, en texte seul (DEC-0024).
+- Ligne 1 : nom du fichier (`OpenableColumns.DISPLAY_NAME`), sans tronquer (passage à la ligne, `CHARTE.md` A.5), en `LabelStyle` (20 sp) et `TextPrimary` : dérogation à la charte, consignée en DEC-0023.
 - Ligne 2 (proposition) : « p. 12 / 48 » en `TextSecondary`.
-- **[À DÉCIDER]** Taille du nom : `AppNameStyle` (28 sp) comme les listes d'Épure, ou `LabelStyle` (20 sp) en `TextPrimary` vu la longueur habituelle des noms d'articles. Le second choix est une dérogation à la charte, à consigner.
-- Liste vide : « Aucun fichier récent » en `TextSecondary`.
+- Aucun document ouvert : pas d'entrée affichée.
 
-**F-4.2 Nombre maximal.** 30 documents (proposition **[À DÉCIDER]**). Au-delà, le plus ancien est retiré et son autorisation persistante libérée. Le système limite le nombre d'autorisations persistantes par app (512 à partir d'Android 11, **[À VÉRIFIER]**).
+**F-4.2 Historique facultatif.** L'accueil ne garde qu'un récent. Un réglage « Garder la liste des documents » (désactivé par défaut, DEC-0024) active une liste complète, du plus récent au plus ancien. Ce réglage est ajouté en session 2c ; la limite de la liste (30 documents, **[À DÉCIDER]** à ce moment) ne s'applique qu'à ce mode. Le système limite le nombre d'autorisations persistantes par app (512 à partir d'Android 11, **[À VÉRIFIER]**).
 
 **F-4.3 Ouverture.** Appui court sur un récent : ouverture à la position de lecture mémorisée (F-5).
 
 **F-4.4 Menu d'appui long.** Fenêtre de menu (`CHARTE.md` A.6), titre = nom du fichier, actions : « Retirer de la liste », « Partager » (F-12).
 - « Retirer de la liste » supprime l'entrée, sa position de lecture et ses marque-pages, et libère l'autorisation persistante. Le fichier lui-même n'est **jamais** supprimé.
-- **[À DÉCIDER]** Confirmation : l'action efface les marque-pages, ce qui n'est pas réversible. Proposition : confirmation seulement si le document a au moins un marque-page.
+- Confirmation : pas en session 2b (DEC-0025) ; à trancher en session 4a, quand les marque-pages existeront.
 
 **F-4.5 Identification d'un document.** Un document est identifié par son URI.
 - Limite connue : le même fichier ouvert par deux chemins (sélecteur, puis pièce jointe) donne deux URI, donc deux entrées.
-- **[À DÉCIDER]** Ajouter une identification secondaire (nom + taille du fichier) pour retrouver la position de lecture. Proposition : oui, simple et sans lecture du contenu.
+- Identification secondaire par nom et taille du fichier, pour retrouver la position de lecture (DEC-0023). Pas de lecture du contenu.
 
 ### F-5 Reprise à la dernière position
 
@@ -149,7 +148,7 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 
 **F-5.2** À la réouverture, le lecteur s'ouvre sur cette page, sans écran intermédiaire.
 
-**F-5.3** **[À DÉCIDER]** Mémoriser aussi le zoom et le décalage dans la page. Proposition : page et décalage vertical seulement ; zoom remis à la largeur.
+**F-5.3** Mémorisation : page et décalage vertical seulement ; le zoom revient à la largeur (DEC-0026).
 
 **F-5.4** Un document ouvert pour la première fois s'ouvre en page 1.
 
@@ -340,7 +339,7 @@ Critères : poids de l'APK, fidélité du rendu sur le jeu de test (annexe A), r
 | Réglages | Globale | Mode nuit, écran allumé |
 
 - Stockage local, dans l'espace privé de l'app ; sauvegarde Android désactivée.
-- **[À DÉCIDER]** Technique : (a) DataStore Preferences, données par document sérialisées avec `org.json` (inclus dans Android, sans dépendance) ; (b) Room (dépendance et génération de code en plus). La charte privilégie DataStore tant que les données ne sont pas réellement structurées. Proposition : (a) ; passage à Room seulement si le volume ou les requêtes l'exigent.
+- Technique : DataStore Preferences, données par document sérialisées avec `org.json` (DEC-0027). Passage à Room seulement si le volume ou les requêtes l'exigent.
 - Retirer un document des récents supprime toutes ses données (F-4.4).
 
 ---
@@ -375,11 +374,11 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 | F-2.6 | Verrouillage d'orientation | 1 | Non |
 | F-3.1 | Zoom maximal | 1 | ×5 |
 | F-3.2 | Cycle du double toucher | 1 | Largeur → demi-page → largeur |
-| F-4.1 | Taille du nom dans les récents | 2 | 20 sp, dérogation consignée |
-| F-4.2 | Nombre de récents | 2 | 30 |
-| F-4.4 | Confirmation du retrait | 2 | Si marque-pages présents |
-| F-4.5 | Identification secondaire (nom + taille) | 2 | Oui |
-| F-5.3 | Mémoriser le zoom | 2 | Non |
+| F-4.1 | Taille du nom dans les récents | 2 | Décidé : 20 sp, dérogation (DEC-0023) |
+| F-4.2 | Historique facultatif | 2 | Décidé : dernier document seul ; liste facultative, désactivée par défaut (DEC-0024) ; limite de la liste à fixer en 2c |
+| F-4.4 | Confirmation du retrait | 4a | Décidé pour 2b : pas de confirmation (DEC-0025) ; à trancher en 4a |
+| F-4.5 | Identification secondaire (nom + taille) | 2 | Décidé : oui (DEC-0023) |
+| F-5.3 | Mémoriser le zoom | 2 | Décidé : non (DEC-0026) |
 | F-6.2 | Délai de masquage des commandes | 3 | 4 s |
 | F-6.3 | Répartition barre / menu « Plus » | 3 | À fixer sur l'appareil |
 | F-7.1 | Indicateur permanent | 3 | Non |
@@ -394,7 +393,7 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 | F-16 | EPUB, CBZ, CBR | après 5 | Hors version 1 |
 | T-6 | Taille du cache, taille max d'image, tuiles | 1 puis 5 | Après mesure |
 | T-7 | Cibles de temps d'ouverture | 1 | Après mesure |
-| §7 | DataStore ou Room | 2 | DataStore + `org.json` |
+| §7 | DataStore ou Room | 2 | Décidé : DataStore + `org.json` (DEC-0027) |
 
 ### 9.2 [À VÉRIFIER] sur l'appareil
 

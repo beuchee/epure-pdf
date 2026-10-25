@@ -630,7 +630,7 @@ Facile.
 ## DEC-0024 — Accueil : dernier document seul, historique facultatif
 
 - Date : 25/10/2026
-- Statut : Proposée (à adopter après validation du porteur)
+- Statut : Adoptée (réglage désactivé par défaut, validé par le porteur)
 - Jalon : 2 (sessions 2b et 2c)
 - Exigences concernées : F-4.1, F-4.2, F-4.3
 
