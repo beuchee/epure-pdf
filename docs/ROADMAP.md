@@ -197,9 +197,9 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 
 ### Session 5a — Gros fichiers et mémoire
 - [ ] Mesurer mémoire et temps sur les documents 2, 5, 9 ; ajuster le cache.
-- [ ] Très grandes pages : résolution plafonnée ou tuiles selon la décision (F-14.3).
+- [x] Très grandes pages : rendu par tuiles au zoom (F-14.3, DEC-0040).
 - [ ] Repli en résolution réduite en cas de manque de mémoire (T-6).
-- [ ] Poignée de défilement rapide si décidée (F-7.3).
+- [ ] Poignée de défilement rapide : écartée (F-7.3, DEC-0039).
 
 ### Session 5b — Documents protégés ou mal formés
 - [x] Mot de passe : boîte de saisie si le moteur le permet, sinon message (F-14.1).
@@ -215,7 +215,7 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 **Liste de contrôle sur l'appareil (jalon 5)**
 - [ ] Document 9 (> 50 Mo) : ouverture dans la cible de temps, défilement complet sans plantage.
 - [ ] Document 5 (A0) : zoom maximal sans plantage.
-- [ ] Document 6 : bon mot de passe → ouverture ; mauvais → message ; réouverture → mot de passe redemandé.
+- [x] Document 6 : bon mot de passe → ouverture ; mauvais → message ; réouverture → mot de passe redemandé.
 - [ ] Document 7 (corrompu) : message, pas de plantage.
 - [ ] Écran partagé avec une autre app : lecture correcte.
 - [ ] Aucune permission dans « Infos sur l'application ».
