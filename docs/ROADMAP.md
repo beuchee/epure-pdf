@@ -113,9 +113,9 @@ Session unique (0).
 - [x] Persistance (`data/`, DataStore, DEC-0027) : dernier document, position de lecture.
 - [x] Accueil : le dernier document ouvert, avec « p. X / N », sous « Ouvrir un fichier » ; aucune entrée si rien n'a été ouvert (F-4.1, DEC-0024).
 - [x] Menu d'appui long : « Retirer de la liste » (libère l'autorisation, efface la position ; le fichier reste) (F-4.4, DEC-0025). « Partager » viendra au jalon 3.
-- [ ] Récent illisible : message « Fichier inaccessible… », entrée conservée (F-1.3, DEC-0021).
+- [x] Récent illisible : message « Fichier inaccessible… », entrée conservée (F-1.3, DEC-0021).
 - [x] Reprise à la dernière position, écriture différée après une pause de lecture (F-5).
-- [ ] Tests unitaires : identification par nom et taille, position hors limites (F-5.5).
+- [x] Tests unitaires : identification par nom et taille, position hors limites (F-5.5).
 
 ### Session 2c — Paramètres et « À propos »
 - [ ] Écran Paramètres minimal avec « À propos » (F-15.2) : version, licence, dépôt, confidentialité, moteur et sa licence.
