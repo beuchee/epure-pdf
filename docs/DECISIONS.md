@@ -598,6 +598,144 @@ Facile : retirer la copie et afficher le message.
 
 ---
 
+## DEC-0023 — Récents : nom affiché et identification secondaire
+
+- Date : 25/10/2026
+- Statut : Proposée (à adopter après validation du porteur)
+- Jalon : 2 (session 2b)
+- Exigences concernées : F-4.1, F-4.5
+
+**Contexte**
+Une liste de récents affiche le nom du fichier, souvent long (titres d'articles). Un même fichier peut être rouvert avec une autre URI (par exemple depuis une autre app) ; il faut alors le reconnaître sans lire son contenu.
+
+**Options**
+- Nom : (a) `AppNameStyle` (28 sp), comme les listes d'Épure ; (b) `LabelStyle` (20 sp) en `TextPrimary`.
+- Identification : (a) nom et taille du fichier ; (b) empreinte du contenu.
+
+**Proposition**
+(b) pour le nom : `LabelStyle` (20 sp) en `TextPrimary`, dérogation à la charte à consigner (la charte prévoit `AppNameStyle` pour les listes). Identification : (a) nom et taille du fichier. Pas de lecture du contenu.
+
+**Justification**
+Les noms d'articles dépassent vite la largeur de l'écran à 28 sp. La taille et le nom suffisent à reconnaître un fichier sans le lire ; une empreinte imposerait de lire tout le document.
+
+**Conséquences**
+- Dérogation à `CHARTE.md` sur la taille du nom : à noter dans la section de dérogations.
+- Les récents conservent nom et taille au moment de l'ouverture.
+
+**Réversibilité**
+Facile.
+
+---
+
+## DEC-0024 — Nombre maximal de récents
+
+- Date : 25/10/2026
+- Statut : Proposée (à adopter après validation du porteur)
+- Jalon : 2 (session 2b)
+- Exigences concernées : F-4.2
+
+**Contexte**
+Chaque récent garde une autorisation persistante. Le système limite leur nombre par app (512 à partir d'Android 11, **[À VÉRIFIER]** sur l'appareil).
+
+**Proposition**
+30 récents. Au-delà, le plus ancien est retiré de la liste et son autorisation persistante est libérée.
+
+**Justification**
+Une liste courte reste lisible au pouce ; 30 reste très en dessous de la limite système.
+
+**Conséquences**
+- Contrôle sur l'appareil à prévoir : libération effective de l'autorisation au 31ᵉ document.
+
+**Réversibilité**
+Facile.
+
+---
+
+## DEC-0025 — Retrait d'un récent : pas de confirmation en session 2b
+
+- Date : 25/10/2026
+- Statut : Proposée (à adopter après validation du porteur)
+- Jalon : 2 (session 2b), à réviser au jalon 4
+- Exigences concernées : F-4.4
+
+**Contexte**
+« Retirer de la liste » libère l'autorisation et efface les données du document (position, réglages propres au document). Le fichier lui-même n'est pas touché. La confirmation prévue par F-4.4 porte sur les marque-pages, qui n'existent qu'à partir du jalon 4.
+
+**Proposition**
+Pas de confirmation en session 2b. Le retrait est immédiat et ne supprime aucun fichier. La confirmation est à trancher en session 4a, quand les marque-pages existeront.
+
+**Justification**
+Aucune donnée n'est perdue hors de l'app (le fichier reste dans « Mes fichiers »). Une confirmation sans objet ajouterait une étape inutile.
+
+**Conséquences**
+- En session 4a : décider si le retrait d'un document avec marque-pages demande confirmation (proposition de F-4.4).
+
+**Réversibilité**
+Facile.
+
+---
+
+## DEC-0026 — Mémorisation de la position : page et décalage, pas le zoom
+
+- Date : 25/10/2026
+- Statut : Proposée (à adopter après validation du porteur)
+- Jalon : 2 (session 2b)
+- Exigences concernées : F-5.3, F-5.1, F-5.2
+
+**Contexte**
+La reprise (F-5) doit ramener au bon endroit. Le zoom peut aussi être mémorisé, mais il change la taille des pages et le décalage horizontal.
+
+**Proposition**
+Mémoriser la page et la fraction de page déjà lue (fonction `pageFraction`, déjà utilisée pour la rotation). Le zoom n'est pas mémorisé : à la reprise, il revient à la largeur.
+
+**Justification**
+Une reprise à la largeur est prévisible. Mémoriser le zoom ajoute un état à relire et à tester pour un gain faible.
+
+**Conséquences**
+- Position écrite de façon différée (F-5.2), comme prévu.
+- Le décalage horizontal n'est pas mémorisé.
+
+**Réversibilité**
+Facile : ajouter le zoom à la sauvegarde.
+
+---
+
+## DEC-0027 — Stockage des récents et des positions : DataStore Preferences
+
+- Date : 25/10/2026
+- Statut : Proposée (à adopter après validation du porteur)
+- Jalon : 2 (session 2b)
+- Exigences concernées : §7 de `SPEC.md`, F-4, F-5
+
+**Contexte**
+L'app doit garder une liste de récents, une position par document et quelques réglages. Ces données sont petites et ne demandent pas de requêtes.
+
+**Options**
+- (a) DataStore Preferences, données par document sérialisées en JSON avec `org.json` (inclus dans Android).
+- (b) Room : base SQLite, dépendance et génération de code (KSP) en plus.
+- (c) SharedPreferences : API ancienne, écritures synchrones sur le fil principal selon l'usage.
+
+**Proposition**
+(a). Passer à Room seulement si le volume ou les requêtes l'exigent.
+
+**Justification**
+La charte privilégie DataStore tant que les données ne sont pas réellement structurées. DataStore écrit en arrière-plan sans bloquer le fil principal.
+
+**Dépendance proposée : `androidx.datastore:datastore-preferences`**
+- Bibliothèque : AndroidX DataStore, Google.
+- Licence : Apache 2.0, compatible GPL v3.
+- Effet sur le manifeste fusionné : aucune permission attendue. À vérifier avec `aapt2 dump permissions` après ajout.
+- Alternative : (b) ou (c) ci-dessus.
+
+**Conséquences**
+- Ajout de la dépendance à `app/build.gradle.kts` seulement après adoption de cette entrée.
+- Aucune permission ajoutée.
+
+**Réversibilité**
+Moyenne : changer de stockage après la session 2b demanderait une migration des données.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).
