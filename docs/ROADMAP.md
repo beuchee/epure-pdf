@@ -139,21 +139,21 @@ Session unique (0).
 **À trancher avant** : délai de masquage et répartition des commandes (F-6.2, F-6.3) ; indicateur permanent (F-7.1) ; portée du mode nuit (F-8.3) ; écran allumé par défaut (F-9.2).
 
 ### Session 3a — Commandes et navigation
-- [ ] Commandes au toucher simple, masquage automatique et au défilement (F-6.1 à F-6.3).
-- [ ] Ordre du bouton Retour complet (F-6.4).
-- [ ] Indicateur « 12 / 48 » (F-7.1).
-- [ ] « Aller à la page » : boîte de saisie, validation, message hors limites (F-7.2).
-- [ ] Tests unitaires : validation du numéro de page.
+- [x] Commandes au toucher simple, masquage automatique et au défilement (F-6.1 à F-6.3).
+- [x] Ordre du bouton Retour complet (F-6.4).
+- [x] Indicateur « 12 / 48 » (F-7.1).
+- [x] « Aller à la page » : boîte de saisie, validation, message hors limites (F-7.2).
+- [x] Tests unitaires : validation du numéro de page.
 
 ### Session 3b — Mode nuit, écran allumé, partage
 - [x] Mode nuit par filtre de couleur, mémorisé selon la décision (F-8).
-- [ ] Écran allumé : option dans Paramètres et menu « Plus », effet limité au lecteur (F-9).
-- [ ] « Partager » dans le menu « Plus » et le menu d'appui long des récents (F-12) ; vérifier selon les sources (F-12.2).
+- [x] Écran allumé : option dans Paramètres et menu « Plus », effet limité au lecteur (F-9).
+- [x] « Partager » dans le menu « Plus » et le menu d'appui long des récents (F-12) ; vérifier selon les sources (F-12.2).
 
 **Liste de contrôle sur l'appareil (jalon 3)**
-- [ ] Toucher simple : commandes affichées ; elles disparaissent après le délai ; un double toucher ne les affiche pas.
-- [ ] Taille de police système au maximum : commandes lisibles, cibles utilisables, rien de coupé.
-- [ ] Aller à la page 150 du document 2 : saut immédiat ; saisir 999 : message.
+- [x] Toucher simple : commandes affichées ; elles disparaissent après le délai ; un double toucher ne les affiche pas.
+- [x] Taille de police système au maximum : commandes lisibles, cibles utilisables, rien de coupé.
+- [x] Aller à la page 150 du document 2 : saut immédiat ; saisir 999 : message.
 - [x] Mode nuit : pages inversées ; réglage conservé après fermeture.
 - [x] Écran allumé activé : l'écran ne s'éteint pas pendant la lecture au-delà du délai de mise en veille ; il s'éteint normalement sur l'accueil.
 - [x] Partager vers une messagerie : le fichier arrive intact.

@@ -75,7 +75,11 @@ class MainActivity : ComponentActivity() {
                         initialFraction = current.fraction,
                         onPosition = { page, fraction -> viewModel.onPosition(page, fraction) },
                         nightMode = nightMode,
+                        onToggleNightMode = { viewModel.setNightMode(it) },
                         keepScreenOn = keepScreenOn,
+                        onToggleKeepScreenOn = { viewModel.setKeepScreenOn(it) },
+                        documentName = current.name,
+                        documentUri = current.uri,
                         onBack = {
                             // A document opened by another app: Back returns to that app (DEC-0020).
                             if (current.external) finish() else viewModel.closeReader()

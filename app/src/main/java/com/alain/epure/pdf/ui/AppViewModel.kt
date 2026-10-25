@@ -32,7 +32,9 @@ sealed interface UiState {
         val document: PdfDocument,
         val external: Boolean,
         val page: Int,
-        val fraction: Float
+        val fraction: Float,
+        val uri: String,
+        val name: String
     ) : UiState
 
     data object Settings : UiState
@@ -115,7 +117,7 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
                     readerUri = document.uri
                     _recents.value = updated
                     persist()
-                    _state.value = UiState.Reader(result.document, external, page, fraction)
+                    _state.value = UiState.Reader(result.document, external, page, fraction, document.uri, document.name)
                 }
                 is OpenResult.Failed -> {
                     // A document that cannot be reopened stays in the list with its position (DEC-0021).

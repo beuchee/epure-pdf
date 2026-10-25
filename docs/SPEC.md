@@ -193,7 +193,7 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 
 ### F-9 Maintien de l'écran allumé
 
-**F-9.1** Option « Écran allumé pendant la lecture », dans les paramètres et dans le menu « Plus ». Effet limité à l'écran du lecteur (`FLAG_KEEP_SCREEN_ON` sur la fenêtre). Aucune permission requise.
+**F-9.1** Option « Écran allumé », dans les paramètres et dans le menu « Plus ». Effet limité à l'écran du lecteur (`FLAG_KEEP_SCREEN_ON` sur la fenêtre). Aucune permission requise.
 
 **F-9.2** Valeur par défaut : activée (décision du porteur, DEC-0030).
 
@@ -249,7 +249,7 @@ Fonction **conditionnelle** : livrée seulement si le moteur retenu fournit le s
 
 ### F-15 Paramètres et « À propos »
 
-**F-15.1 Paramètres** (liste de réglages, `CHARTE.md` A.6) : « Écran allumé pendant la lecture », « Mode nuit », « À propos ». Rien d'autre sans nouvelle exigence.
+**F-15.1 Paramètres** (liste de réglages, `CHARTE.md` A.6) : « Écran allumé », « Mode nuit », « À propos ». Rien d'autre sans nouvelle exigence.
 
 **F-15.2 « À propos »** : nom, version, licence GPL v3, lien « Dépôt GitHub » (ouvert par le navigateur, sans permission réseau propre à l'app), section confidentialité (texte de T-2), licences des ressources tierces éventuelles, mention du moteur de rendu et de sa licence.
 

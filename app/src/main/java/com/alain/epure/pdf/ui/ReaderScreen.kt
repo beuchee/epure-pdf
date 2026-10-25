@@ -2,6 +2,7 @@ package com.alain.epure.pdf.ui
 
 import android.app.Activity
 import android.graphics.Bitmap
+import android.net.Uri
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.activity.compose.BackHandler
@@ -18,9 +19,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,6 +45,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -52,6 +56,8 @@ import com.alain.epure.pdf.domain.LruByteCache
 import com.alain.epure.pdf.domain.MIN_ZOOM
 import com.alain.epure.pdf.domain.clampOffsetX
 import com.alain.epure.pdf.domain.clampZoom
+import com.alain.epure.pdf.domain.VisiblePage
+import com.alain.epure.pdf.domain.currentPage
 import com.alain.epure.pdf.domain.doubleTapTarget
 import com.alain.epure.pdf.domain.halfPageOffsetX
 import com.alain.epure.pdf.domain.offsetXForFocus
@@ -60,6 +66,7 @@ import com.alain.epure.pdf.domain.renderWidthPx
 import com.alain.epure.pdf.domain.scrollOffsetForFocus
 import com.alain.epure.pdf.system.PageSize
 import com.alain.epure.pdf.system.PdfDocument
+import com.alain.epure.pdf.system.shareDocument
 import com.alain.epure.pdf.ui.theme.Black
 import com.alain.epure.pdf.ui.theme.LabelStyle
 import com.alain.epure.pdf.ui.theme.TextSecondary
@@ -76,18 +83,53 @@ fun ReaderScreen(
     initialFraction: Float,
     onPosition: (page: Int, fraction: Float) -> Unit,
     nightMode: Boolean,
+    onToggleNightMode: (Boolean) -> Unit,
     keepScreenOn: Boolean,
+    onToggleKeepScreenOn: (Boolean) -> Unit,
+    documentName: String,
+    documentUri: String,
     onBack: () -> Unit
 ) {
-    ImmersiveMode()
+    val context = LocalContext.current
+    // Commands: a tap shows or hides them. They hide by themselves after a pause, or when the page scrolls (SPEC F-6.1, F-6.2).
+    var commandsVisible by remember { mutableStateOf(false) }
+    var interactions by remember { mutableIntStateOf(0) }
+    var menuOpen by remember { mutableStateOf(false) }
+    var goToOpen by remember { mutableStateOf(false) }
+    val dialogOpen = menuOpen || goToOpen
+
+    ImmersiveMode(showBars = commandsVisible)
     KeepScreenOn(keepScreenOn)
     BackHandler(onBack = onBack)
+    // Registered after the handler above, so it takes precedence while it is enabled:
+    // the open window closes first, then the commands, then the reader (SPEC F-6.4).
+    BackHandler(enabled = dialogOpen || commandsVisible) {
+        when {
+            menuOpen -> menuOpen = false
+            goToOpen -> goToOpen = false
+            else -> commandsVisible = false
+        }
+    }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize().background(Black)) {
         val viewportWidthDp = maxWidth
         val viewportWidthPx = with(LocalDensity.current) { viewportWidthDp.roundToPx() }.toFloat()
         val scope = rememberCoroutineScope()
         val listState = rememberLazyListState()
+
+        // The commands leave after a pause without interaction; the pause restarts on each tap (SPEC F-6.2).
+        LaunchedEffect(commandsVisible, interactions, dialogOpen) {
+            if (commandsVisible && !dialogOpen) {
+                delay(COMMANDS_HIDE_DELAY_MS)
+                commandsVisible = false
+            }
+        }
+        // Scrolling hides the commands at once (SPEC F-6.2).
+        LaunchedEffect(listState.isScrollInProgress) {
+            if (listState.isScrollInProgress) commandsVisible = false
+        }
+        // The page shown in the indicator is the one taking most of the screen (SPEC F-7.1).
+        val currentPageIndex by remember { derivedStateOf { currentPage(visiblePages(listState)) } }
 
         // scale follows the fingers at once; renderScale only changes once the zoom has settled.
         var scale by remember { mutableFloatStateOf(MIN_ZOOM) }
@@ -136,6 +178,10 @@ fun ReaderScreen(
                 .fillMaxSize()
                 .pointerInput(Unit) {
                     detectTapGestures(
+                        onTap = {
+                            commandsVisible = !commandsVisible
+                            interactions++
+                        },
                         onDoubleTap = { position: Offset ->
                             val target = doubleTapTarget(scale)
                             keepFocusStill(position.y, target / scale)
@@ -182,6 +228,48 @@ fun ReaderScreen(
                 }
             }
         }
+
+        if (commandsVisible) {
+            CommandsTop(name = documentName, modifier = Modifier.align(Alignment.TopStart))
+            CommandsBottom(
+                page = (currentPageIndex ?: anchorPage) + 1,
+                pageCount = document.pageCount,
+                onPageClick = { goToOpen = true },
+                onMoreClick = { menuOpen = true },
+                modifier = Modifier.align(Alignment.BottomStart)
+            )
+        }
+        if (menuOpen) {
+            MoreMenu(
+                nightMode = nightMode,
+                onToggleNightMode = onToggleNightMode,
+                keepScreenOn = keepScreenOn,
+                onToggleKeepScreenOn = onToggleKeepScreenOn,
+                onShare = { shareDocument(context, Uri.parse(documentUri), documentName) },
+                onDismiss = { menuOpen = false }
+            )
+        }
+        if (goToOpen) {
+            GoToPageDialog(
+                pageCount = document.pageCount,
+                onDismiss = { goToOpen = false },
+                onGo = { page ->
+                    goToOpen = false
+                    commandsVisible = false
+                    scope.launch { listState.scrollToItem(page - 1) }
+                }
+            )
+        }
+    }
+}
+
+// Pages on screen with the height each one takes (SPEC F-7.1).
+private fun visiblePages(state: LazyListState): List<VisiblePage> {
+    val layout = state.layoutInfo
+    return layout.visibleItemsInfo.map { item ->
+        val top = maxOf(item.offset, layout.viewportStartOffset)
+        val bottom = minOf(item.offset + item.size, layout.viewportEndOffset)
+        VisiblePage(item.index, bottom - top)
     }
 }
 
@@ -263,14 +351,19 @@ private fun KeepScreenOn(enabled: Boolean) {
 }
 
 // Full-screen reading: hide the system bars, they come back on a swipe from the edge (SPEC F-2.4).
+// The system bars come back with the commands, and leave with them (CHARTE B.4).
 @Composable
-private fun ImmersiveMode() {
+private fun ImmersiveMode(showBars: Boolean) {
     val view = LocalView.current
-    DisposableEffect(view) {
+    DisposableEffect(view, showBars) {
         val window = (view.context as? Activity)?.window
         val controller = window?.insetsController
         controller?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        controller?.hide(WindowInsets.Type.systemBars())
+        if (showBars) {
+            controller?.show(WindowInsets.Type.systemBars())
+        } else {
+            controller?.hide(WindowInsets.Type.systemBars())
+        }
         onDispose { controller?.show(WindowInsets.Type.systemBars()) }
     }
 }
@@ -289,4 +382,7 @@ private val NightFilter = ColorFilter.colorMatrix(
 )
 
 private const val A4_RATIO = 595f / 842f
+
+// Pause without interaction after which the commands hide (SPEC F-6.2, decided at 4 s).
+private const val COMMANDS_HIDE_DELAY_MS = 4_000L
 private const val RENDER_SETTLE_MS = 250L

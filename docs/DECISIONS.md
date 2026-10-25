@@ -823,6 +823,28 @@ Facile.
 
 ---
 
+## DEC-0031 — Commandes du lecteur : délai, barre et menu « Plus »
+
+- Date : 25/10/2026
+- Statut : Adoptée (choix du porteur)
+- Jalon : 3 (session 3a)
+- Exigences concernées : F-6.1, F-6.2, F-6.3, F-6.4, F-7.1, F-7.2
+
+**Décision**
+- Délai de masquage automatique : 4 secondes sans interaction (F-6.2), ou dès que la page défile. Le délai repart à chaque toucher.
+- Barre du bas : l'indicateur « 12 / 48 » (ouvre « Aller à la page ») et « Plus ». Barre du haut : le nom du fichier.
+- Menu « Plus » : « Partager », « Mode nuit », « Écran allumé ». Les actions des sessions suivantes (Sommaire, Rechercher, Marque-page) s'ajouteront à ce menu ou à la barre selon leur place.
+- Les barres système réapparaissent avec les commandes et disparaissent avec elles (`CHARTE.md` B.4).
+
+**Conséquences**
+- Retour (F-6.4) : ferme la fenêtre ouverte, puis masque les commandes, puis quitte le lecteur.
+- F-6.2 et F-6.3 à mettre à jour dans `SPEC.md` et au §9.1.
+
+**Réversibilité**
+Facile.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).
