@@ -974,6 +974,79 @@ Moyenne : un sommaire demanderait une autre bibliothèque ou un autre moteur (vo
 
 ---
 
+## DEC-0037 — Autres formats : trois applications séparées
+
+- Date : 25/10/2026
+- Statut : Adoptée
+- Jalon : hors feuille de route
+- Exigences concernées : F-16 (EPUB, CBZ, CBR)
+
+**Contexte**
+Le `SPEC.md` (F-16) envisageait l'ajout d'EPUB, de CBZ et de CBR à Épure PDF. Le nom « Épure PDF » ne couvrirait plus l'app, et chaque format demande un moteur d'affichage distinct : pages PDF, images d'une archive, texte recomposable.
+
+**Décision**
+Chaque format fait l'objet d'une application séparée, sur le modèle d'Épure PDF, sans dépendance de code entre elles :
+- Épure CBZ (archive ZIP d'images) ;
+- Épure EPUB (texte recomposable) ;
+- CBR (archive RAR) : traité dans une application à part, après levée de la question de licence UnRAR, ou converti en CBZ par l'utilisateur.
+
+Aucune de ces applications n'est créée à ce jour.
+
+**Conséquences**
+- F-16 reste marqué `[À DÉCIDER]` dans `SPEC.md` ; le porteur l'alignera sur cette décision (`CLAUDE.md` §5).
+- Épure PDF ne reçoit pas de nouveau format.
+
+**Réversibilité**
+Facile tant qu'aucune application n'est créée.
+
+---
+
+## DEC-0038 — Mot de passe à l'ouverture et repli mémoire
+
+- Date : 25/10/2026
+- Statut : Adoptée. Mot de passe validé sur l'appareil le 25/10/2026 (fichier de test chiffré, mot de passe 1234). Repli mémoire : pas encore déclenché sur l'appareil.
+- Jalon : 5 (sessions 5a et 5b)
+- Exigences concernées : F-14.1, T-6, T-8
+
+**Constat**
+PdfRenderer accepte un mot de passe par `LoadParams` à partir d'Android 16 (API 36). Un fichier chiffré ouvert sans mot de passe lève une `SecurityException`, comme prévu par DEC-0015.
+
+**Décision**
+- Sur Android 16 et plus : si un document est protégé, une boîte de saisie masquée « Mot de passe » s'affiche ; « Ouvrir » relance l'ouverture avec le mot de passe saisi. Mot de passe erroné : « Mot de passe incorrect. » dans la même boîte.
+- Le mot de passe n'est jamais enregistré : il n'existe ni dans les réglages, ni dans les récents, ni dans l'état de l'écran. Il est redemandé à chaque ouverture.
+- Sur les versions antérieures : le message « Ce document est protégé par un mot de passe et ne peut pas être ouvert. » est conservé.
+- Manque de mémoire pendant le rendu d'une page : la page est redessinée à la moitié de la largeur demandée ; si cela échoue encore, elle affiche « Page illisible ». Aucun plantage.
+
+**Conséquences**
+- Nouvel état d'écran `UiState.Password` et nouvelle erreur `OpenError.WrongPassword`.
+- Aucune dépendance ajoutée ; aucune permission ajoutée (contrôle `aapt2` passé le 25/10/2026).
+- Ce qui reste à décider (taille de cache, tuiles, poignée de défilement) n'est pas tranché ici : voir `SPEC.md` §9.1.
+
+**Réversibilité**
+Facile.
+
+---
+
+## DEC-0039 — Poignée de défilement rapide et très grandes pages
+
+- Date : 25/10/2026
+- Statut : Adoptée (décisions du porteur, prises le 25/10/2026)
+- Jalon : 5 (session 5a)
+- Exigences concernées : F-7.3, F-14.3, T-6
+
+**Décision**
+- Poignée de défilement rapide (F-7.3) : non en version 1. Le défilement continu et « Aller à la page » suffisent.
+- Très grandes pages (F-14.3, T-6) : résolution réduite, sans rendu par tuiles. Au zoom maximal, le texte d'une très grande page peut paraître moins net ; à revoir seulement si la mesure sur l'appareil le justifie.
+
+**Conséquences**
+- Aucun code à ajouter pour F-7.3.
+- `SPEC.md` §9.1 (F-7.3, T-6) à aligner par le porteur (`CLAUDE.md` §5). Les points « taille du cache » et « cibles de temps » restent `[À DÉCIDER]` jusqu'à mesure sur l'appareil.
+
+**Réversibilité**
+Moyenne pour les tuiles (nouveau moteur de rendu par morceaux) ; facile pour la poignée.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).

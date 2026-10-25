@@ -185,5 +185,6 @@ private fun errorMessage(error: OpenError): Int = when (error) {
     OpenError.NotFound -> R.string.error_not_found
     OpenError.AccessRevoked -> R.string.error_access_revoked
     OpenError.PasswordRequired -> R.string.error_password_required
+    OpenError.WrongPassword -> R.string.password_wrong
     OpenError.Unreadable -> R.string.error_unreadable
 }

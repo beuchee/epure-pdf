@@ -38,6 +38,15 @@ sealed interface UiState {
         val name: String
     ) : UiState
 
+    // The document is protected: the password is asked for before opening (SPEC F-14.1).
+    // wrong: the last password typed was refused. The password itself is never kept in the state.
+    class Password(
+        val uri: Uri,
+        val external: Boolean,
+        val fromRecent: Boolean,
+        val wrong: Boolean
+    ) : UiState
+
     data object Settings : UiState
     data object About : UiState
 }
@@ -100,10 +109,10 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch { container.settings.setNightMode(enabled) }
     }
 
-    fun open(uri: Uri, external: Boolean = false, fromRecent: Boolean = false) {
+    fun open(uri: Uri, external: Boolean = false, fromRecent: Boolean = false, password: String? = null) {
         viewModelScope.launch {
             val name = withContext(Dispatchers.IO) { readDisplayName(container.context, uri) }
-            when (val result = container.engine.open(container.context, uri)) {
+            when (val result = container.engine.open(container.context, uri, password)) {
                 is OpenResult.Opened -> {
                     val previous = _recents.value
                     // The same file under another URI keeps its position (SPEC F-4.5, DEC-0023).
@@ -128,12 +137,23 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
                     _state.value = UiState.Reader(result.document, external, page, fraction, document.uri, document.name)
                 }
                 is OpenResult.Failed -> {
-                    // A document that cannot be reopened stays in the list with its position (DEC-0021).
                     closeCurrent()
-                    _state.value = UiState.Home(result.error, recentUnavailable = fromRecent)
+                    val askPassword = result.error == OpenError.PasswordRequired && container.engine.passwordSupported
+                    _state.value = if (askPassword || result.error == OpenError.WrongPassword) {
+                        UiState.Password(uri, external, fromRecent, wrong = result.error == OpenError.WrongPassword)
+                    } else {
+                        // A document that cannot be reopened stays in the list with its position (DEC-0021).
+                        UiState.Home(result.error, recentUnavailable = fromRecent)
+                    }
                 }
             }
         }
+    }
+
+    // Opens the document waiting for a password, with the password typed in (SPEC F-14.1).
+    fun submitPassword(password: String) {
+        val waiting = _state.value as? UiState.Password ?: return
+        open(waiting.uri, waiting.external, waiting.fromRecent, password)
     }
 
     fun openRecent(uri: String) {
