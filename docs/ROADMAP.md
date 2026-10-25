@@ -95,7 +95,7 @@ Session unique (0).
 - [x] Document 8 (non PDF) : message, pas de plantage.
 - [x] Rotation au milieu d'un document : même page.
 - [x] Annuler le sélecteur : retour à l'accueil sans message.
-- [ ] Aucune permission dans « Infos sur l'application » ; contrôle `aapt2` passé.
+- [x] Aucune permission dans « Infos sur l'application » ; contrôle `aapt2` passé.
 
 ---
 
@@ -105,8 +105,8 @@ Session unique (0).
 
 ### Session 2a — Intent `VIEW`
 - [x] Filtre `VIEW` `application/pdf`, schéma `content` (F-1.2) ; `SEND` si décidé.
-- [ ] Vérifier sur l'appareil la persistance des droits et le type de descripteur selon la source (F-1.3, F-1.4) ; consigner les résultats.
-- [ ] Copie temporaire ou message, selon la décision (F-1.4).
+- [x] Vérifier sur l'appareil la persistance des droits et le type de descripteur selon la source (F-1.3, F-1.4) ; consigner les résultats.
+- [x] Copie temporaire ou message, selon la décision (F-1.4).
 - [x] Retour depuis le lecteur ouvert par `VIEW` : retour à l'app d'origine.
 
 ### Session 2b — Récents et reprise
