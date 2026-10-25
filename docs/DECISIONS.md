@@ -601,7 +601,7 @@ Facile : retirer la copie et afficher le message.
 ## DEC-0023 — Récents : nom affiché et identification secondaire
 
 - Date : 25/10/2026
-- Statut : Proposée (à adopter après validation du porteur)
+- Statut : Adoptée
 - Jalon : 2 (session 2b)
 - Exigences concernées : F-4.1, F-4.5
 
@@ -627,34 +627,37 @@ Facile.
 
 ---
 
-## DEC-0024 — Nombre maximal de récents
+## DEC-0024 — Accueil : dernier document seul, historique facultatif
 
 - Date : 25/10/2026
 - Statut : Proposée (à adopter après validation du porteur)
-- Jalon : 2 (session 2b)
-- Exigences concernées : F-4.2
+- Jalon : 2 (sessions 2b et 2c)
+- Exigences concernées : F-4.1, F-4.2, F-4.3
 
 **Contexte**
-Chaque récent garde une autorisation persistante. Le système limite leur nombre par app (512 à partir d'Android 11, **[À VÉRIFIER]** sur l'appareil).
+Une liste de 30 récents impose une limite, une purge et la libération d'autorisations en série. Pour la plupart des lecteurs, le besoin réel est de reprendre le document en cours.
 
 **Proposition**
-30 récents. Au-delà, le plus ancien est retiré de la liste et son autorisation persistante est libérée.
+- Session 2b : l'accueil affiche le dernier document ouvert, avec sa position. Un seul récent est gardé ; ouvrir un autre document remplace l'entrée. Pas de liste, donc pas de limite de 30 ni de purge.
+- Historique facultatif : un réglage « Garder la liste des documents » (désactivé par défaut) activera une liste complète. Ce réglage sera ajouté en session 2c, avec l'écran Paramètres ; la limite de 30 ne s'applique qu'à ce mode, à trancher alors.
 
 **Justification**
-Une liste courte reste lisible au pouce ; 30 reste très en dessous de la limite système.
+Le dernier document suffit à reprendre la lecture. Une liste désactivée par défaut évite de garder des accès à des fichiers que le lecteur n'a pas demandés à retenir. Le réglage reste disponible pour qui veut un historique.
 
 **Conséquences**
-- Contrôle sur l'appareil à prévoir : libération effective de l'autorisation au 31ᵉ document.
+- F-4.2 (30 récents) devient conditionnel au réglage : à réviser dans `SPEC.md` une fois adopté.
+- Le menu d'appui long (DEC-0025) porte sur l'entrée affichée ; en mode historique, il porte sur l'entrée touchée.
+- Une autorisation persistante n'est gardée que pour le dernier document, sauf en mode historique.
 
 **Réversibilité**
-Facile.
+Facile : passer de l'entrée unique à la liste ne change pas le stockage (DEC-0027).
 
 ---
 
 ## DEC-0025 — Retrait d'un récent : pas de confirmation en session 2b
 
 - Date : 25/10/2026
-- Statut : Proposée (à adopter après validation du porteur)
+- Statut : Adoptée
 - Jalon : 2 (session 2b), à réviser au jalon 4
 - Exigences concernées : F-4.4
 
@@ -678,7 +681,7 @@ Facile.
 ## DEC-0026 — Mémorisation de la position : page et décalage, pas le zoom
 
 - Date : 25/10/2026
-- Statut : Proposée (à adopter après validation du porteur)
+- Statut : Adoptée
 - Jalon : 2 (session 2b)
 - Exigences concernées : F-5.3, F-5.1, F-5.2
 
@@ -703,7 +706,7 @@ Facile : ajouter le zoom à la sauvegarde.
 ## DEC-0027 — Stockage des récents et des positions : DataStore Preferences
 
 - Date : 25/10/2026
-- Statut : Proposée (à adopter après validation du porteur)
+- Statut : Adoptée
 - Jalon : 2 (session 2b)
 - Exigences concernées : §7 de `SPEC.md`, F-4, F-5
 
