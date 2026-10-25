@@ -285,13 +285,13 @@ Listés dans les fonctions proposées, absents de la feuille de route. Points à
 **T-5 Sobriété.** Dépendances au strict minimum ; chacune justifiée dans `DECISIONS.md` avant ajout, avec sa licence et sa compatibilité GPL v3 (`CHARTE.md` A.3, A.12).
 
 **T-6 Mémoire.**
-- Cache d'images de pages borné en octets (proposition : 1/8 de la mémoire disponible pour l'app, **[À DÉCIDER]** après mesure).
-- Taille maximale d'une image de page bornée (proposition : 4 096 px de côté ou ~16 Mo, **[À DÉCIDER]**) ; au-delà, rendu par morceaux (tuiles) ou résolution réduite — **[À DÉCIDER]** au jalon 5.
+- Cache d'images de pages borné en octets (proposition : 1/8 de la mémoire disponible pour l'app, après mesure).
+- Taille maximale d'une image de page bornée (proposition : 4 096 px de côté ou ~16 Mo) ; au-delà, rendu par morceaux (tuiles) au jalon 5.
 - Un seul rendu à la fois si le moteur l'impose (PdfRenderer n'accepte qu'une page ouverte à la fois et n'est pas utilisable depuis plusieurs fils en parallèle).
 - Aucun plantage pour manque de mémoire : la page concernée passe en résolution réduite.
 
 **T-7 Performances (cibles, à mesurer sur l'appareil de référence).**
-- Première page visible en moins d'1 s pour un article de 20 pages ; moins de 2 s pour un document de 500 pages (propositions **[À DÉCIDER]**).
+- Première page visible en moins d'1 s pour un article de 20 pages ; moins de 2 s pour un document de 500 pages.
 - Défilement sans à-coups perceptibles sur un article courant.
 - Ouverture du document en dehors du fil principal (aucun blocage de l'interface).
 

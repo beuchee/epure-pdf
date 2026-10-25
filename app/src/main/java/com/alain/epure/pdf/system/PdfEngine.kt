@@ -3,6 +3,7 @@ package com.alain.epure.pdf.system
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import com.alain.epure.pdf.domain.Tile
 
 // The rest of the app only talks to these types, never to PdfRenderer directly (SPEC T-12).
 // The engine was chosen in DEC-0015.
@@ -43,6 +44,9 @@ interface PdfDocument {
 
     // Returns null when the page cannot be rendered (SPEC F-14.2).
     suspend fun render(index: Int, widthPx: Int): Bitmap?
+
+    // Part of a page drawn at widthPx by heightPx, for pages too large to draw whole (SPEC T-6, DEC-0040).
+    suspend fun renderTile(index: Int, widthPx: Int, heightPx: Int, tile: Tile): Bitmap?
 
     // One list of rectangles per occurrence of the text on the page. Null when the page cannot be searched.
     suspend fun searchPage(index: Int, query: String): List<List<PageRect>>?

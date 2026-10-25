@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.produceState
@@ -53,6 +54,8 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import com.alain.epure.pdf.PageKey
 import com.alain.epure.pdf.R
 import com.alain.epure.pdf.domain.LruByteCache
@@ -66,6 +69,9 @@ import com.alain.epure.pdf.domain.halfPageOffsetX
 import com.alain.epure.pdf.domain.offsetXForFocus
 import com.alain.epure.pdf.domain.pageFraction
 import com.alain.epure.pdf.domain.renderWidthPx
+import com.alain.epure.pdf.domain.Tile
+import com.alain.epure.pdf.domain.pageHeightPx
+import com.alain.epure.pdf.domain.tilesFor
 import com.alain.epure.pdf.domain.scrollOffsetForFocus
 import com.alain.epure.pdf.system.PageRect
 import com.alain.epure.pdf.system.PageSize
@@ -247,6 +253,9 @@ fun ReaderScreen(
                         index,
                         viewportWidthPx.roundToInt(),
                         renderScale,
+                        scale,
+                        offsetX,
+                        listState,
                         cache,
                         nightMode,
                         search.highlightsOn(index)
@@ -346,6 +355,9 @@ private fun ReaderPage(
     index: Int,
     viewportWidthPx: Int,
     renderScale: Float,
+    scale: Float,
+    offsetX: Float,
+    listState: LazyListState,
     cache: LruByteCache<PageKey, Bitmap>,
     nightMode: Boolean,
     highlights: List<PageRect>
@@ -385,6 +397,38 @@ private fun ReaderPage(
         }
     }
 
+    // When the zoom wants more pixels than the whole-page budget allows, the visible part of the page
+    // is also drawn in sharp tiles over the whole page (SPEC F-3.3, DEC-0040). Null when no tiles are needed.
+    val wantedWidth = (viewportWidthPx * renderScale).roundToInt()
+    val tileSpace = renderWidth?.takeIf { it < wantedWidth }?.let { width ->
+        pageSize?.let { width to pageHeightPx(width, it.width, it.height) }
+    }
+    // Pages are laid out at the live zoom, the tiles at the rendered zoom: the ratio converts between them.
+    val live = scale / renderScale
+    val tiles = tileSpace?.let { (width, height) ->
+        val band = pageBandOnScreen(listState, index) ?: return@let emptyList()
+        tilesFor(
+            pageWidthPx = width,
+            pageHeightPx = height,
+            visibleLeft = (-offsetX / live).roundToInt(),
+            visibleTop = (band.first / live).roundToInt(),
+            visibleRight = ((viewportWidthPx - offsetX) / live).roundToInt(),
+            visibleBottom = (band.second / live).roundToInt()
+        )
+    }.orEmpty()
+    val tileBitmaps = remember(document, index, renderWidth) { mutableStateMapOf<Tile, Bitmap>() }
+
+    LaunchedEffect(document, index, tileSpace, tiles) {
+        val (width, height) = tileSpace ?: return@LaunchedEffect
+        tileBitmaps.keys.filter { it !in tiles }.forEach { tileBitmaps.remove(it) }
+        for (tile in tiles) {
+            if (tile in tileBitmaps) continue
+            val key = PageKey(index, width, tile)
+            val bitmap = cache.get(key) ?: document.renderTile(index, width, height, tile)?.also { cache.put(key, it) }
+            if (bitmap != null) tileBitmaps[tile] = bitmap
+        }
+    }
+
     val bitmap = shown
     Box(
         modifier = Modifier.fillMaxWidth().aspectRatio(ratio),
@@ -404,6 +448,20 @@ private fun ReaderPage(
             )
             else -> Box(Modifier.fillMaxSize().background(if (nightMode) Color.Black else Color.White))
         }
+        if (tileSpace != null) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                // Tiles are placed at the live size of the page, like the whole page above them.
+                val factor = this.size.width / tileSpace.first
+                tileBitmaps.forEach { (tile, tileBitmap) ->
+                    drawImage(
+                        image = tileBitmap.asImageBitmap(),
+                        dstOffset = IntOffset((tile.left * factor).roundToInt(), (tile.top * factor).roundToInt()),
+                        dstSize = IntSize((tile.width * factor).roundToInt(), (tile.height * factor).roundToInt()),
+                        colorFilter = if (nightMode) NightFilter else null
+                    )
+                }
+            }
+        }
         // Every occurrence of the search is drawn as its negative: the colours under it are inverted,
         // so black on white becomes white on black, and the reverse in night mode (SPEC F-11.4).
         if (highlights.isNotEmpty()) {
@@ -421,6 +479,13 @@ private fun ReaderPage(
             }
         }
     }
+}
+
+// Top and bottom of the screen in pixels from the top of a page, at the live zoom (null when the page is not shown).
+private fun pageBandOnScreen(state: LazyListState, index: Int): Pair<Float, Float>? {
+    val layout = state.layoutInfo
+    val item = layout.visibleItemsInfo.firstOrNull { it.index == index } ?: return null
+    return (layout.viewportStartOffset - item.offset).toFloat() to (layout.viewportEndOffset - item.offset).toFloat()
 }
 
 // The screen stays on while the reader is shown and the setting is on (SPEC F-9.1).
