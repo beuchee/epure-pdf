@@ -11,7 +11,7 @@ import com.alain.epure.pdf.domain.resumePage
 import com.alain.epure.pdf.system.OpenError
 import com.alain.epure.pdf.system.OpenResult
 import com.alain.epure.pdf.system.PdfDocument
-import com.alain.epure.pdf.system.readDocumentInfo
+import com.alain.epure.pdf.system.readDisplayName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -32,6 +32,9 @@ sealed interface UiState {
         val page: Int,
         val fraction: Float
     ) : UiState
+
+    data object Settings : UiState
+    data object About : UiState
 }
 
 // Holds the open document across rotations (SPEC F-2.6) and the last document opened (SPEC F-4, F-5).
@@ -54,12 +57,12 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
 
     fun open(uri: Uri, external: Boolean = false, fromRecent: Boolean = false) {
         viewModelScope.launch {
-            val info = withContext(Dispatchers.IO) { readDocumentInfo(container.context, uri) }
+            val name = withContext(Dispatchers.IO) { readDisplayName(container.context, uri) }
             when (val result = container.engine.open(container.context, uri)) {
                 is OpenResult.Opened -> {
                     val previous = _recent.value
                     // The same file under another URI keeps its position (SPEC F-4.5, DEC-0023).
-                    val sameFile = previous?.takeIf { isSameFile(it, info.name, info.sizeBytes) }
+                    val sameFile = previous?.takeIf { isSameFile(it, name) }
                     val page = resumePage(sameFile?.page ?: 0, result.document.pageCount)
                     val fraction = if (sameFile != null && page == sameFile.page) sameFile.fraction else 0f
 
@@ -68,8 +71,7 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
                     closeCurrent()
                     _recent.value = RecentDocument(
                         uri = uri.toString(),
-                        name = info.name,
-                        sizeBytes = info.sizeBytes,
+                        name = name,
                         pageCount = result.document.pageCount,
                         page = page,
                         fraction = fraction
@@ -114,6 +116,18 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         closeCurrent()
         persist()
         _state.value = UiState.Home()
+    }
+
+    fun showHome() {
+        _state.value = UiState.Home()
+    }
+
+    fun showSettings() {
+        _state.value = UiState.Settings
+    }
+
+    fun showAbout() {
+        _state.value = UiState.About
     }
 
     override fun onCleared() {

@@ -115,7 +115,7 @@ Session unique (0).
 - [x] Menu d'appui long : « Retirer de la liste » (libère l'autorisation, efface la position ; le fichier reste) (F-4.4, DEC-0025). « Partager » viendra au jalon 3.
 - [x] Récent illisible : message « Fichier inaccessible… », entrée conservée (F-1.3, DEC-0021).
 - [x] Reprise à la dernière position, écriture différée après une pause de lecture (F-5).
-- [x] Tests unitaires : identification par nom et taille, position hors limites (F-5.5).
+- [x] Tests unitaires : identification par nom, position hors limites (F-5.5).
 
 ### Session 2c — Paramètres et « À propos »
 - [ ] Écran Paramètres minimal avec « À propos » (F-15.2) : version, licence, dépôt, confidentialité, moteur et sa licence.

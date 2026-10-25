@@ -9,26 +9,19 @@ class RecentDocumentTest {
     private val saved = RecentDocument(
         uri = "content://provider/1",
         name = "article.pdf",
-        sizeBytes = 4_200_000L,
         pageCount = 48,
         page = 11,
         fraction = 0.5f
     )
 
     @Test
-    fun sameNameAndSizeIsTheSameFile() {
-        assertTrue(isSameFile(saved, name = "article.pdf", sizeBytes = 4_200_000L))
+    fun sameNameIsTheSameFile() {
+        assertTrue(isSameFile(saved, name = "article.pdf"))
     }
 
     @Test
-    fun differentNameOrSizeIsAnotherFile() {
-        assertFalse(isSameFile(saved, name = "other.pdf", sizeBytes = 4_200_000L))
-        assertFalse(isSameFile(saved, name = "article.pdf", sizeBytes = 4_200_001L))
-    }
-
-    @Test
-    fun unknownSizeNeverMatches() {
-        assertFalse(isSameFile(saved, name = "article.pdf", sizeBytes = -1L))
+    fun differentNameIsAnotherFile() {
+        assertFalse(isSameFile(saved, name = "other.pdf"))
     }
 
     @Test

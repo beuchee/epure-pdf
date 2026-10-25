@@ -42,7 +42,8 @@ fun HomeScreen(
     recent: RecentDocument?,
     onOpen: (Uri) -> Unit,
     onOpenRecent: () -> Unit,
-    onRemoveRecent: () -> Unit
+    onRemoveRecent: () -> Unit,
+    onSettings: () -> Unit
 ) {
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         // Cancelling the picker returns null: stay on the home screen, without a message (SPEC F-1.1).
@@ -88,6 +89,9 @@ fun HomeScreen(
                 color = TextSecondary
             )
         }
+        // Settings access sits at the bottom of the home screen (DEC-0028).
+        Spacer(Modifier.weight(1f))
+        TextAction(text = stringResource(R.string.settings_title), onClick = onSettings)
     }
 
     if (menuOpen && recent != null) {

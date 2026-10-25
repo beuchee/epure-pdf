@@ -9,6 +9,16 @@
     <string name="error_unreadable">Ce fichier n\'est pas un PDF lisible.</string>
     <string name="error_recent_unavailable">Fichier inaccessible. Ouvre-le à nouveau depuis le sélecteur.</string>
     <string name="remove_recent">Retirer de la liste</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="about">À propos</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_license">Licence GPL v3</string>
+    <string name="about_repository">Dépôt GitHub</string>
+    <string name="error_no_browser">Aucun navigateur n\'est disponible pour ouvrir ce lien.</string>
+    <string name="about_privacy_title">Confidentialité</string>
+    <string name="about_privacy_text">Aucune donnée ne quitte l\'appareil. Aucune bibliothèque d\'analytics, de suivi de plantage ou de publicité. Aucune statistique de lecture. L\'app conserve seulement : l\'adresse du document (URI), son nom, son nombre de pages, la position de lecture, les marque-pages et les réglages. Le contenu des documents n\'est jamais stocké.</string>
+    <string name="about_engine_title">Moteur de rendu</string>
+    <string name="about_engine_text">PdfRenderer, moteur intégré à Android. Android Open Source Project, licence Apache 2.0.</string>
     <string name="recent_page">p. %1$d / %2$d</string>
     <string name="page_unreadable">Page illisible</string>
     <plurals name="page_description">

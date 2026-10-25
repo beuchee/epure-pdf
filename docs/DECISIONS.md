@@ -220,7 +220,7 @@ Facile.
 - Exigences concernées : T-2, §7
 
 **Décision**
-L'app conserve seulement l'URI, les métadonnées de la liste des récents (nom, taille, nombre de pages, date), la position de lecture, les marque-pages et les réglages, stockés localement. Le contenu des documents n'est pas copié.
+L'app conserve seulement l'URI, les métadonnées de la liste des récents (nom, nombre de pages), la position de lecture, les marque-pages et les réglages, stockés localement. Le contenu des documents n'est pas copié.
 
 **Conséquences**
 Une exception éventuelle (copie temporaire pour les descripteurs non repositionnables, `SPEC.md` F-1.4) fera l'objet d'une entrée dédiée qui précisera ses limites.
@@ -613,14 +613,17 @@ Une liste de récents affiche le nom du fichier, souvent long (titres d'articles
 - Identification : (a) nom et taille du fichier ; (b) empreinte du contenu.
 
 **Proposition**
-(b) pour le nom : `LabelStyle` (20 sp) en `TextPrimary`, dérogation à la charte à consigner (la charte prévoit `AppNameStyle` pour les listes). Identification : (a) nom et taille du fichier. Pas de lecture du contenu.
+(b) pour le nom : `LabelStyle` (20 sp) en `TextPrimary`, dérogation à la charte à consigner (la charte prévoit `AppNameStyle` pour les listes). Identification : (a) nom et taille du fichier, puis **modifiée par le porteur** (voir ci-dessous).
 
 **Justification**
 Les noms d'articles dépassent vite la largeur de l'écran à 28 sp. La taille et le nom suffisent à reconnaître un fichier sans le lire ; une empreinte imposerait de lire tout le document.
 
 **Conséquences**
 - Dérogation à `CHARTE.md` sur la taille du nom : à noter dans la section de dérogations.
-- Les récents conservent nom et taille au moment de l'ouverture.
+- Les récents conservent le nom au moment de l'ouverture.
+
+**Modification du 25/10/2026 (porteur)**
+La taille n'est ni stockée ni affichée. L'identification d'un même fichier sous une autre URI repose donc sur le **nom seul**. Conséquence acceptée : deux fichiers différents portant le même nom partagent la même position ; la page est alors ramenée à la page 1 si elle dépasse le nombre de pages (F-5.5).
 
 **Réversibilité**
 Facile.
@@ -736,6 +739,35 @@ La charte privilégie DataStore tant que les données ne sont pas réellement st
 
 **Réversibilité**
 Moyenne : changer de stockage après la session 2b demanderait une migration des données.
+
+---
+
+## DEC-0028 — Accès « Paramètres » sur l'accueil : en bas, action secondaire
+
+- Date : 25/10/2026
+- Statut : Adoptée
+- Jalon : 2 (session 2c)
+- Exigences concernées : `CHARTE.md` B.3 (point ouvert), F-15.1
+
+**Contexte**
+L'accueil doit donner accès aux Paramètres sans concurrencer « Ouvrir un fichier ». La charte laissait l'emplacement ouvert.
+
+**Options**
+- (a) En bas de l'accueil, action secondaire « Paramètres » (`LabelStyle`, `TextSecondary`).
+- (b) En haut, à droite du titre.
+- (c) Seulement dans un appui long sur le titre.
+
+**Décision**
+(a). Le porteur a validé cette option.
+
+**Justification**
+Discret, toujours visible, sans icône (charte A : texte seul), et ne gêne pas l'action principale.
+
+**Conséquences**
+- Composant `TextAction` dans `ActionRow.kt`, réutilisé tel quel par la suite (A.6, « Action secondaire »).
+
+**Réversibilité**
+Facile.
 
 ---
 

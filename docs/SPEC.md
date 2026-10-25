@@ -140,7 +140,7 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 
 **F-4.5 Identification d'un document.** Un document est identifié par son URI.
 - Limite connue : le même fichier ouvert par deux chemins (sélecteur, puis pièce jointe) donne deux URI, donc deux entrées.
-- Identification secondaire par nom et taille du fichier, pour retrouver la position de lecture (DEC-0023). Pas de lecture du contenu.
+- Identification secondaire par nom du fichier, pour retrouver la position de lecture (DEC-0023, modifiée par le porteur : la taille n'est pas utilisée). Pas de lecture du contenu.
 
 ### F-5 Reprise à la dernière position
 
@@ -276,7 +276,7 @@ Listés dans les fonctions proposées, absents de la feuille de route. Points à
 - Une permission injectée par une bibliothèque est retirée par `tools:node="remove"`, ou la bibliothèque est écartée (décision consignée).
 - `ACCESS_NETWORK_STATE` est traitée de la même manière.
 
-**T-2 Confidentialité.** Aucune donnée ne quitte l'appareil. Aucune bibliothèque d'analytics, de suivi de plantage ou de publicité. Aucune statistique de lecture. L'app conserve seulement : URI, nom affiché, nombre de pages, position de lecture, date de dernière ouverture, marque-pages, réglages. Le contenu des documents n'est jamais stocké (sauf copie temporaire si F-1.4 option (a) est retenue).
+**T-2 Confidentialité.** Aucune donnée ne quitte l'appareil. Aucune bibliothèque d'analytics, de suivi de plantage ou de publicité. Aucune statistique de lecture. L'app conserve seulement : URI, nom affiché, nombre de pages, position de lecture, marque-pages, réglages. La date d'ouverture et la taille du fichier ne sont ni conservées ni affichées. Le contenu des documents n'est jamais stocké (sauf copie temporaire si F-1.4 option (a) est retenue).
 
 **T-3 Accès aux fichiers.** Uniquement par le SAF et les intents `VIEW` (et `SEND` si retenu). Jamais `MANAGE_EXTERNAL_STORAGE`, `READ_EXTERNAL_STORAGE`, `READ_MEDIA_*`. L'app ne parcourt pas le stockage et n'écrit dans aucun fichier de l'utilisateur.
 
@@ -333,7 +333,7 @@ Critères : poids de l'APK, fidélité du rendu sur le jeu de test (annexe A), r
 
 | Donnée | Portée | Contenu |
 |---|---|---|
-| Récents | Par document | URI, nom affiché, taille en octets, nombre de pages, date de dernière ouverture |
+| Récents | Par document | URI, nom affiché, nombre de pages |
 | Position de lecture | Par document | Page, décalage vertical (et zoom si F-5.3 le décide) |
 | Marque-pages | Par document | Liste de numéros de page |
 | Réglages | Globale | Mode nuit, écran allumé |
@@ -377,7 +377,7 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 | F-4.1 | Taille du nom dans les récents | 2 | Décidé : 20 sp, dérogation (DEC-0023) |
 | F-4.2 | Historique facultatif | 2 | Décidé : dernier document seul ; liste facultative, désactivée par défaut (DEC-0024) ; limite de la liste à fixer en 2c |
 | F-4.4 | Confirmation du retrait | 4a | Décidé pour 2b : pas de confirmation (DEC-0025) ; à trancher en 4a |
-| F-4.5 | Identification secondaire (nom + taille) | 2 | Décidé : oui (DEC-0023) |
+| F-4.5 | Identification secondaire (nom) | 2 | Décidé : oui, sur le nom seul (DEC-0023, modifiée par le porteur) |
 | F-5.3 | Mémoriser le zoom | 2 | Décidé : non (DEC-0026) |
 | F-6.2 | Délai de masquage des commandes | 3 | 4 s |
 | F-6.3 | Répartition barre / menu « Plus » | 3 | À fixer sur l'appareil |

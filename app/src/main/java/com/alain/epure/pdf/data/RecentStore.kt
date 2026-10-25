@@ -35,7 +35,6 @@ class RecentStore(private val context: Context) {
     private fun toJson(document: RecentDocument): String = JSONObject()
         .put(KEY_URI, document.uri)
         .put(KEY_NAME, document.name)
-        .put(KEY_SIZE, document.sizeBytes)
         .put(KEY_PAGE_COUNT, document.pageCount)
         .put(KEY_PAGE, document.page)
         .put(KEY_FRACTION, document.fraction.toDouble())
@@ -46,7 +45,6 @@ class RecentStore(private val context: Context) {
         return RecentDocument(
             uri = json.getString(KEY_URI),
             name = json.getString(KEY_NAME),
-            sizeBytes = json.getLong(KEY_SIZE),
             pageCount = json.getInt(KEY_PAGE_COUNT),
             page = json.getInt(KEY_PAGE),
             fraction = json.getDouble(KEY_FRACTION).toFloat()
@@ -57,7 +55,6 @@ class RecentStore(private val context: Context) {
         val LAST_DOCUMENT = stringPreferencesKey("last_document")
         const val KEY_URI = "uri"
         const val KEY_NAME = "name"
-        const val KEY_SIZE = "size"
         const val KEY_PAGE_COUNT = "pageCount"
         const val KEY_PAGE = "page"
         const val KEY_FRACTION = "fraction"

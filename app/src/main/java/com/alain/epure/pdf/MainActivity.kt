@@ -13,8 +13,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.ViewModelProvider
+import com.alain.epure.pdf.ui.AboutScreen
 import com.alain.epure.pdf.ui.AppViewModel
 import com.alain.epure.pdf.ui.HomeScreen
+import com.alain.epure.pdf.ui.SettingsScreen
 import com.alain.epure.pdf.ui.ReaderScreen
 import com.alain.epure.pdf.ui.UiState
 import com.alain.epure.pdf.ui.theme.EpureTheme
@@ -48,8 +50,14 @@ class MainActivity : ComponentActivity() {
                         recent = recent,
                         onOpen = { viewModel.open(it) },
                         onOpenRecent = { viewModel.openRecent() },
-                        onRemoveRecent = { viewModel.removeRecent() }
+                        onRemoveRecent = { viewModel.removeRecent() },
+                        onSettings = { viewModel.showSettings() }
                     )
+                    is UiState.Settings -> SettingsScreen(
+                        onAbout = { viewModel.showAbout() },
+                        onBack = { viewModel.showHome() }
+                    )
+                    is UiState.About -> AboutScreen(onBack = { viewModel.showSettings() })
                     is UiState.Reader -> ReaderScreen(
                         document = current.document,
                         cache = container.pageCache,
