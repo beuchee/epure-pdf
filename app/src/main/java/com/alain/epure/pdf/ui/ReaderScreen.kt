@@ -88,6 +88,8 @@ fun ReaderScreen(
     onToggleKeepScreenOn: (Boolean) -> Unit,
     documentName: String,
     documentUri: String,
+    bookmarks: List<Int>,
+    onToggleBookmark: (page: Int) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
@@ -96,7 +98,8 @@ fun ReaderScreen(
     var interactions by remember { mutableIntStateOf(0) }
     var menuOpen by remember { mutableStateOf(false) }
     var goToOpen by remember { mutableStateOf(false) }
-    val dialogOpen = menuOpen || goToOpen
+    var bookmarksOpen by remember { mutableStateOf(false) }
+    val dialogOpen = menuOpen || goToOpen || bookmarksOpen
 
     ImmersiveMode(showBars = commandsVisible)
     KeepScreenOn(keepScreenOn)
@@ -107,6 +110,7 @@ fun ReaderScreen(
         when {
             menuOpen -> menuOpen = false
             goToOpen -> goToOpen = false
+            bookmarksOpen -> bookmarksOpen = false
             else -> commandsVisible = false
         }
     }
@@ -229,10 +233,12 @@ fun ReaderScreen(
             }
         }
 
+        // The page the reader shows: the one taking most of the screen, or the saved one before the first layout.
+        val shownPage = currentPageIndex ?: anchorPage
         if (commandsVisible) {
             CommandsTop(name = documentName, modifier = Modifier.align(Alignment.TopStart))
             CommandsBottom(
-                page = (currentPageIndex ?: anchorPage) + 1,
+                page = shownPage + 1,
                 pageCount = document.pageCount,
                 onPageClick = { goToOpen = true },
                 onMoreClick = { menuOpen = true },
@@ -241,6 +247,14 @@ fun ReaderScreen(
         }
         if (menuOpen) {
             MoreMenu(
+                bookmarked = shownPage in bookmarks,
+                hasBookmarks = bookmarks.isNotEmpty(),
+                // The menu stays open, so the grey action shows its new state at once.
+                onToggleBookmark = { onToggleBookmark(shownPage) },
+                onShowBookmarks = {
+                    menuOpen = false
+                    bookmarksOpen = true
+                },
                 nightMode = nightMode,
                 onToggleNightMode = onToggleNightMode,
                 keepScreenOn = keepScreenOn,
@@ -258,6 +272,18 @@ fun ReaderScreen(
                     commandsVisible = false
                     scope.launch { listState.scrollToItem(page - 1) }
                 }
+            )
+        }
+        if (bookmarksOpen) {
+            BookmarksDialog(
+                pages = bookmarks,
+                onGo = { page ->
+                    bookmarksOpen = false
+                    commandsVisible = false
+                    scope.launch { listState.scrollToItem(page) }
+                },
+                onRemove = onToggleBookmark,
+                onDismiss = { bookmarksOpen = false }
             )
         }
     }

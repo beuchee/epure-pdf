@@ -1,6 +1,10 @@
 package com.alain.epure.pdf.ui
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -88,6 +92,10 @@ fun CommandsBottom(
 // « Plus » window (CHARTE A.6): the less frequent actions. Returns false from onShare when the document cannot be shared.
 @Composable
 fun MoreMenu(
+    bookmarked: Boolean,
+    hasBookmarks: Boolean,
+    onToggleBookmark: () -> Unit,
+    onShowBookmarks: () -> Unit,
     nightMode: Boolean,
     onToggleNightMode: (Boolean) -> Unit,
     keepScreenOn: Boolean,
@@ -120,6 +128,16 @@ fun MoreMenu(
                 )
             }
             Spacer(Modifier.height(24.dp))
+            // Title, then the action in grey below it: « Ajouter » becomes « Retirer » once the page is marked.
+            ActionRow(text = stringResource(R.string.bookmark_title)) { onToggleBookmark() }
+            TextAction(text = stringResource(if (bookmarked) R.string.bookmark_remove else R.string.bookmark_add)) {
+                onToggleBookmark()
+            }
+            // Opens the bookmarks window; a long press there removes a bookmark (SPEC F-10.3).
+            TextAction(text = stringResource(if (hasBookmarks) R.string.bookmarks else R.string.no_bookmark)) {
+                onShowBookmarks()
+            }
+            Spacer(Modifier.height(24.dp))
             ActionRow(text = stringResource(R.string.night_mode)) { onToggleNightMode(!nightMode) }
             Text(
                 text = stringResource(if (nightMode) R.string.state_on else R.string.state_off),
@@ -133,6 +151,45 @@ fun MoreMenu(
                 style = LabelStyle,
                 color = TextSecondary
             )
+        }
+    }
+}
+
+// « Marque-pages » window (SPEC F-10.3): a tap goes to the page, a long press removes the bookmark at once (DEC-0035).
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun BookmarksDialog(pages: List<Int>, onGo: (Int) -> Unit, onRemove: (Int) -> Unit, onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier
+                .background(Black)
+                .padding(24.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Text(
+                text = stringResource(R.string.bookmarks),
+                style = LabelStyle,
+                color = TextPrimary
+            )
+            Spacer(Modifier.height(24.dp))
+            if (pages.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.no_bookmark),
+                    style = LabelStyle,
+                    color = TextSecondary
+                )
+            }
+            pages.forEach { page ->
+                Text(
+                    text = stringResource(R.string.bookmark_page, page + 1),
+                    style = AppNameStyle,
+                    color = TextPrimary,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 48.dp)
+                        .combinedClickable(onClick = { onGo(page) }, onLongClick = { onRemove(page) })
+                )
+            }
         }
     }
 }

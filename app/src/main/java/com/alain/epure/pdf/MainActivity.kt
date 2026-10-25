@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
                 val keepList by viewModel.keepList.collectAsState()
                 val nightMode by viewModel.nightMode.collectAsState()
                 val keepScreenOn by viewModel.keepScreenOn.collectAsState()
+                val bookmarks by viewModel.bookmarks.collectAsState()
                 when (val current = state) {
                     is UiState.Home -> HomeScreen(
                         error = current.error,
@@ -80,6 +81,8 @@ class MainActivity : ComponentActivity() {
                         onToggleKeepScreenOn = { viewModel.setKeepScreenOn(it) },
                         documentName = current.name,
                         documentUri = current.uri,
+                        bookmarks = bookmarks[current.uri].orEmpty(),
+                        onToggleBookmark = { viewModel.toggleBookmark(it) },
                         onBack = {
                             // A document opened by another app: Back returns to that app (DEC-0020).
                             if (current.external) finish() else viewModel.closeReader()
