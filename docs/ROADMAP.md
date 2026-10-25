@@ -122,14 +122,14 @@ Session unique (0).
 - [x] Réglage « Liste des documents » (désactivé par défaut) et liste complète, limitée à 10 documents (F-4.2, DEC-0024).
 
 **Liste de contrôle sur l'appareil (jalon 2)**
-- [ ] « Ouvrir avec » Épure PDF depuis « Mes fichiers », Samsung Email ou Gmail, Chrome (téléchargement) : le document s'ouvre.
-- [ ] Retour après ouverture par `VIEW` : retour à l'app d'origine.
-- [ ] Fermer à la page 37, rouvrir depuis les récents : page 37.
-- [ ] Redémarrer le téléphone, rouvrir un récent ouvert par le sélecteur : il s'ouvre.
-- [ ] Récent issu d'une pièce jointe : comportement conforme à la décision F-1.3.
-- [ ] Déplacer ou supprimer un fichier récent dans « Mes fichiers », puis le toucher : message, pas de plantage.
-- [ ] « Retirer de la liste » : l'entrée disparaît ; le fichier existe toujours dans « Mes fichiers ».
-- [ ] Forcer l'arrêt de l'app pendant la lecture puis la relancer : position conservée.
+- [x] « Ouvrir avec » Épure PDF depuis « Mes fichiers », Gmail ou WhatsApp : le document s'ouvre. Chrome et Samsung Browser ouvrent les PDF dans leur propre visionneuse, sans proposer Épure PDF (comportement de ces apps).
+- [x] Retour après ouverture par `VIEW` : retour à l'app d'origine.
+- [x] Fermer à la page 37, rouvrir depuis les récents : page 37.
+- [x] Redémarrer le téléphone, rouvrir un récent ouvert par le sélecteur : il s'ouvre.
+- [x] Récent issu d'une pièce jointe : comportement conforme à la décision F-1.3.
+- [x] Déplacer ou supprimer un fichier récent dans « Mes fichiers », puis le toucher : message, pas de plantage.
+- [x] « Retirer de la liste » : l'entrée disparaît ; le fichier existe toujours dans « Mes fichiers ».
+- [x] Forcer l'arrêt de l'app pendant la lecture puis la relancer : position conservée.
 - [x] « À propos » : lien du dépôt ouvert dans le navigateur ; aucune permission ajoutée.
 
 ---
