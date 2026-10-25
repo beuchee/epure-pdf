@@ -130,7 +130,7 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 - Ligne 2 (proposition) : « p. 12 / 48 » en `TextSecondary`.
 - Aucun document ouvert : pas d'entrée affichée.
 
-**F-4.2 Historique facultatif.** L'accueil ne garde qu'un récent. Un réglage « Garder la liste des documents » (désactivé par défaut, DEC-0024) active une liste complète, du plus récent au plus ancien. Ce réglage est ajouté en session 2c ; la limite de la liste (30 documents, **[À DÉCIDER]** à ce moment) ne s'applique qu'à ce mode. Le système limite le nombre d'autorisations persistantes par app (512 à partir d'Android 11, **[À VÉRIFIER]**).
+**F-4.2 Historique facultatif.** L'accueil ne garde qu'un récent. Un réglage « Garder la liste des documents » (désactivé par défaut, DEC-0024) active une liste complète, du plus récent au plus ancien. Ce réglage est ajouté en session 2c ; la liste est limitée à 10 documents (DEC-0024) et ne s'applique qu'à ce mode. Le système limite le nombre d'autorisations persistantes par app (512 à partir d'Android 11, **[À VÉRIFIER]**).
 
 **F-4.3 Ouverture.** Appui court sur un récent : ouverture à la position de lecture mémorisée (F-5).
 
