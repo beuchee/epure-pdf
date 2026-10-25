@@ -118,7 +118,7 @@ Session unique (0).
 - [x] Tests unitaires : identification par nom, position hors limites (F-5.5).
 
 ### Session 2c — Paramètres et « À propos »
-- [ ] Écran Paramètres minimal avec « À propos » (F-15.2) : version, licence, dépôt, confidentialité, moteur et sa licence.
+- [x] Écran Paramètres minimal avec « À propos » (F-15.2) : version, licence, dépôt, confidentialité, moteur et sa licence.
 - [ ] Réglage « Garder la liste des documents » (désactivé par défaut) et liste complète, limitée à 10 documents (F-4.2, DEC-0024).
 
 **Liste de contrôle sur l'appareil (jalon 2)**
@@ -130,7 +130,7 @@ Session unique (0).
 - [ ] Déplacer ou supprimer un fichier récent dans « Mes fichiers », puis le toucher : message, pas de plantage.
 - [ ] « Retirer de la liste » : l'entrée disparaît ; le fichier existe toujours dans « Mes fichiers ».
 - [ ] Forcer l'arrêt de l'app pendant la lecture puis la relancer : position conservée.
-- [ ] « À propos » : lien du dépôt ouvert dans le navigateur ; aucune permission ajoutée.
+- [x] « À propos » : lien du dépôt ouvert dans le navigateur ; aucune permission ajoutée.
 
 ---
 
