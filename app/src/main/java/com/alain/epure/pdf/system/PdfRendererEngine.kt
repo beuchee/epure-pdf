@@ -127,17 +127,29 @@ private class RendererDocument(
         synchronized(lock) {
             if (closed) return@withContext null
             try {
-                renderer.openPage(index).use { page ->
-                    val heightPx = pageHeightPx(widthPx, page.width.toFloat(), page.height.toFloat())
-                    val bitmap = createBitmap(widthPx, heightPx)
-                    bitmap.eraseColor(Color.WHITE)
-                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                    bitmap
+                renderPage(index, widthPx)
+            } catch (e: OutOfMemoryError) {
+                // Not enough memory for this width: the page is drawn at half width instead (SPEC T-6).
+                try {
+                    renderPage(index, widthPx / 2)
+                } catch (e: OutOfMemoryError) {
+                    null
                 }
-            } catch (e: Exception) {
-                null
             }
         }
+    }
+
+    // Null when the page cannot be drawn (SPEC F-14.2). Out-of-memory errors are left to the caller.
+    private fun renderPage(index: Int, widthPx: Int): Bitmap? = try {
+        renderer.openPage(index).use { page ->
+            val heightPx = pageHeightPx(widthPx, page.width.toFloat(), page.height.toFloat())
+            val bitmap = createBitmap(widthPx, heightPx)
+            bitmap.eraseColor(Color.WHITE)
+            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+            bitmap
+        }
+    } catch (e: Exception) {
+        null
     }
 
     override suspend fun searchPage(index: Int, query: String): List<List<PageRect>>? = withContext(Dispatchers.IO) {
