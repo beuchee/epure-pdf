@@ -62,7 +62,7 @@ Samsung sous Android 16 / One UI 8.0. Émulateur accepté pour le développement
 | Aller à la page | Boîte de saisie (composant `CHARTE.md` A.6) | Commandes → indicateur de page | 3 |
 | Marque-pages | Liste des marque-pages du document | Commandes | 4 |
 | Recherche | Champ de recherche et navigation entre résultats | Commandes | 4 |
-| Table des matières | Liste hiérarchique du sommaire du PDF | Commandes | 4 |
+| Table des matières | Liste hiérarchique du sommaire du PDF | Commandes | 4 (écartée, DEC-0036) |
 | Paramètres | Options de lecture, « À propos » | Accueil | 2 (« À propos »), 3 (options) |
 | Mot de passe | Boîte de saisie | Ouverture d'un PDF protégé | 5 |
 
@@ -89,7 +89,7 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 - **[Décidé : DEC-0021, texte modifié]** Traitement d'un récent devenu illisible : (a) l'afficher en `TextSecondary` avec, au toucher, « Fichier inaccessible. Ouvre-le à nouveau depuis l'application où il a été ouvert initialement. » et l'action « Ouvrir un fichier » ; (b) ne pas l'ajouter aux récents. Proposition : (a), la position de lecture étant retrouvée si le même fichier est rouvert (voir F-4.5).
 
 **F-1.4 Fichier non lisible directement.** Le moteur de rendu (PdfRenderer notamment) exige un descripteur de fichier sur lequel il peut se déplacer librement. Certaines apps fournissent un flux non repositionnable (pièces jointes, fichiers en cours de téléchargement).
-- **[À VÉRIFIER]** Quelles sources fournissent un descripteur non repositionnable.
+- **[Constaté : DEC-0034]** Gmail, Firefox Focus, Chrome (téléchargement), WhatsApp et « Mes fichiers » fournissent un descripteur repositionnable : le document est lu directement, sans copie. Samsung Browser et Chrome (lecteur intégré) n'envoient pas le fichier à Épure PDF.
 - **[Décidé : DEC-0022]** En ce cas : (a) copie **temporaire** dans le cache privé de l'app, supprimée à la fermeture du document et au démarrage suivant ; (b) message d'erreur. La note de cadrage dit « l'app ne copie pas les fichiers » : l'option (a) est une dérogation à consigner dans `DECISIONS.md` si elle est retenue.
 
 **F-1.5 Erreurs d'ouverture.** Fichier absent, droit retiré, fichier vide, fichier qui n'est pas un PDF, PDF mal formé : un message en texte, sans plantage, et retour possible à l'accueil. Libellés (proposition) : « Fichier introuvable. », « Accès au fichier retiré. », « Ce fichier n'est pas un PDF lisible. »
@@ -209,15 +209,15 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 
 ### F-11 Recherche de texte
 
-Fonction **conditionnelle** : livrée seulement si le moteur retenu au jalon 1 permet l'extraction de texte sur l'appareil de référence (**[À VÉRIFIER]**).
+Fonction **conditionnelle** : livrée sur Android 16 et plus (DEC-0015) ; vérifiée sur l'appareil de référence en session 4b. Sur les versions antérieures, la fenêtre « Rechercher » affiche un message.
 
 **F-11.1** Action « Rechercher » : champ de recherche (`CHARTE.md` A.6), clavier ouvert à l'arrivée. Entrée = lancer la recherche.
 
-**F-11.2** Recherche insensible à la casse ; **[Décidé : DEC-0035]** insensible aux accents si le moteur le permet, sinon recherche exacte (**[À VÉRIFIER]** en session 4b).
+**F-11.2** Recherche insensible à la casse ; **[Décidé : DEC-0035]** insensible aux accents si le moteur le permet, sinon recherche exacte (vérifié sur l'appareil en session 4b).
 
 **F-11.3** Résultat : saut à la première occurrence, occurrence signalée sur la page ; compteur « 3 / 17 » ; actions « Précédent » et « Suivant ». Aucun résultat : « Aucun résultat ».
 
-**F-11.4** **[Décidé : DEC-0035]** Rectangle gris translucide sur l'occurrence. Aucune couleur d'accent, donc aucune dérogation à la charte.
+**F-11.4** **[Décidé : DEC-0035, modifié le 25/10/2026]** Négatif de l'occurrence : les couleurs sous le rectangle sont inversées (noir sur blanc devient blanc sur noir, et l'inverse en mode nuit), par un mélange « différence » avec le jeton `TextPrimary`. Aucune couleur d'accent, donc aucune dérogation à la charte.
 
 **F-11.5** Sur un document long, la recherche ne bloque pas l'interface ; elle peut être interrompue par Retour. Aucun indicateur animé ; le compteur est affiché à la fin de la recherche (**[Décidé : DEC-0035]**).
 
@@ -229,9 +229,9 @@ Fonction **conditionnelle** : livrée seulement si le moteur retenu au jalon 1 p
 
 **F-12.2** Si le droit sur l'URI ne permet pas de la transmettre, message « Ce fichier ne peut pas être partagé depuis Épure PDF. » **[À VÉRIFIER]** selon les sources.
 
-### F-13 Table des matières
+### F-13 Table des matières — écartée (DEC-0036)
 
-Fonction **conditionnelle** : livrée seulement si le moteur retenu fournit le sommaire (« outline ») du PDF (**[À VÉRIFIER]** — PdfRenderer ne semble pas l'exposer ; à confirmer au jalon 1).
+Fonction **écartée** : PdfRenderer ne fournit pas le sommaire (« outline ») du PDF, vérifié dans le SDK Android 16 (DEC-0036). Les exigences ci-dessous ne sont pas livrées.
 
 **F-13.1** Action « Sommaire » : liste hiérarchique des titres, retrait de 16 dp par niveau, texte seul ; appui court = aller à la page du titre.
 
@@ -298,7 +298,7 @@ Listés dans les fonctions proposées, absents de la feuille de route. Points à
 **T-8 Robustesse.** Aucun plantage pour : fichier absent, droit retiré, PDF mal formé, PDF protégé, page illisible, mémoire insuffisante, rotation, mise en arrière-plan, arrêt du processus par le système (au retour, réouverture sur la position mémorisée).
 
 **T-9 Conformité à la charte.** `CHARTE.md` Partie A s'applique : thème sombre seul, trois jetons de couleur, typographie en `sp`, aucune icône par défaut, aucune animation, composants types, textes dans `strings.xml`, français et tutoiement, ton neutre, accessibilité minimale, gestes, méthode de travail, règles Git.
-- Adaptations propres au lecteur : les pages PDF gardent leurs couleurs d'origine (hors mode nuit) ; le signalement de recherche (F-11.4) peut exiger une dérogation.
+- Adaptations propres au lecteur : les pages PDF gardent leurs couleurs d'origine (hors mode nuit) ; le signalement de recherche (F-11.4) est un négatif et ne demande pas de dérogation.
 
 **T-10 Contraintes Android** (`CHARTE.md` A.4) : edge-to-edge géré par `WindowInsets` ; retour prédictif ; `allowBackup="false"` ; une seule activité ; `ViewModel` + `StateFlow` ; pas de framework d'injection (`AppContainer`).
 
@@ -387,7 +387,7 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 | F-9.2 | Écran allumé par défaut | 3 | Décidé : activé (DEC-0030) |
 | F-10.2 | Libellé des marque-pages | 4 | Décidé : numéro seul (DEC-0035) |
 | F-11.2 | Recherche insensible aux accents | 4 | Décidé : si le moteur le permet (DEC-0035) |
-| F-11.4 | Couleur du signalement de recherche | 4 | Décidé : gris translucide (DEC-0035) |
+| F-11.4 | Couleur du signalement de recherche | 4 | Décidé : négatif de l'occurrence (DEC-0035, modifié le 25/10/2026) |
 | F-11.5 | Compteur de résultats | 4 | Décidé : à la fin de la recherche (DEC-0035) |
 | F-14.1 | Mot de passe jamais enregistré | 5 | Oui |
 | F-16 | EPUB, CBZ, CBR | après 5 | Hors version 1 |
@@ -399,10 +399,10 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 
 | Réf. | Point |
 |---|---|
-| §6 | PdfRenderer sous Android 16 / One UI 8 : extraction et recherche de texte, mot de passe, sommaire |
+| §6 | PdfRenderer sous Android 16 / One UI 8 : mot de passe à vérifier (recherche vérifiée en session 4b ; sommaire écarté, DEC-0036) |
 | §6 | androidx.pdf : statut, `minSdk`, dépendances, permissions injectées, compatibilité Compose |
 | F-1.3 | Persistance des droits reçus par `VIEW` : non persistante depuis « Mes fichiers » (DEC-0034) ; autres sources à vérifier |
-| F-1.4 | Sources fournissant un descripteur non repositionnable |
+| F-1.4 | Sources fournissant un descripteur non repositionnable : constaté, aucune des cinq sources testées n'en fournit (DEC-0034) |
 | F-2.4 | Mode immersif sous One UI 8 |
 | F-4.2 | Limite système des autorisations persistantes |
 | F-12.2 | Possibilité de repartager une URI selon la source |
