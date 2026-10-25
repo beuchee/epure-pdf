@@ -157,7 +157,7 @@ Session unique (0).
 - [x] Mode nuit : pages inversées ; réglage conservé après fermeture.
 - [x] Écran allumé activé : l'écran ne s'éteint pas pendant la lecture au-delà du délai de mise en veille ; il s'éteint normalement sur l'accueil.
 - [x] Partager vers une messagerie : le fichier arrive intact.
-- [ ] TalkBack : commandes et pages annoncées.
+- [x] TalkBack : commandes et pages annoncées.
 
 ---
 
