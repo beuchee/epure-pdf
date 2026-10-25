@@ -207,7 +207,7 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 - [ ] Revue de tous les messages d'erreur (ton neutre, `strings.xml`).
 
 ### Session 5c — Vérifications finales
-- [ ] Écran partagé et fenêtre flottante One UI (T-13).
+- [x] Écran partagé et fenêtre flottante One UI (T-13).
 - [ ] Revue complète des `[À VÉRIFIER]` restants dans `SPEC.md`.
 - [ ] Revue du README et de « À propos ».
 - [ ] Contrôle final du manifeste fusionné.
@@ -217,7 +217,7 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 - [ ] Document 5 (A0) : zoom maximal sans plantage.
 - [x] Document 6 : bon mot de passe → ouverture ; mauvais → message ; réouverture → mot de passe redemandé.
 - [ ] Document 7 (corrompu) : message, pas de plantage.
-- [ ] Écran partagé avec une autre app : lecture correcte.
+- [x] Écran partagé avec une autre app : lecture correcte.
 - [ ] Aucune permission dans « Infos sur l'application ».
 
 ---
