@@ -146,7 +146,7 @@ Session unique (0).
 - [ ] Tests unitaires : validation du numéro de page.
 
 ### Session 3b — Mode nuit, écran allumé, partage
-- [ ] Mode nuit par filtre de couleur, mémorisé selon la décision (F-8).
+- [x] Mode nuit par filtre de couleur, mémorisé selon la décision (F-8).
 - [ ] Écran allumé : option dans Paramètres et menu « Plus », effet limité au lecteur (F-9).
 - [ ] « Partager » dans le menu « Plus » et le menu d'appui long des récents (F-12) ; vérifier selon les sources (F-12.2).
 
@@ -154,7 +154,7 @@ Session unique (0).
 - [ ] Toucher simple : commandes affichées ; elles disparaissent après le délai ; un double toucher ne les affiche pas.
 - [ ] Taille de police système au maximum : commandes lisibles, cibles utilisables, rien de coupé.
 - [ ] Aller à la page 150 du document 2 : saut immédiat ; saisir 999 : message.
-- [ ] Mode nuit : pages inversées ; réglage conservé après fermeture.
+- [x] Mode nuit : pages inversées ; réglage conservé après fermeture.
 - [ ] Écran allumé activé : l'écran ne s'éteint pas pendant la lecture au-delà du délai de mise en veille ; il s'éteint normalement sur l'accueil.
 - [ ] Partager vers une messagerie : le fichier arrive intact.
 - [ ] TalkBack : commandes et pages annoncées.
