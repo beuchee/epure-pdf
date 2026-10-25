@@ -84,7 +84,7 @@ Session unique (0).
 - [x] Pincement entre ×1 et le maximum décidé, déplacement libre (F-3.1).
 - [x] Double toucher : cycle décidé, cadrage sur la colonne touchée (F-3.2).
 - [x] Nouveau rendu net après le geste (F-3.3).
-- [ ] Tests unitaires `domain/` : cycle de zoom, calcul de la résolution de rendu, page courante.
+- [x] Tests unitaires `domain/` : cycle de zoom, calcul de la résolution de rendu, page courante.
 
 **Liste de contrôle sur l'appareil (jalon 1)**
 - [x] Ouvrir le document 1 depuis « Mes fichiers » via le sélecteur : affichage correct, défilement fluide.

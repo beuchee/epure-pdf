@@ -53,6 +53,7 @@ import com.alain.epure.pdf.domain.clampZoom
 import com.alain.epure.pdf.domain.doubleTapTarget
 import com.alain.epure.pdf.domain.halfPageOffsetX
 import com.alain.epure.pdf.domain.offsetXForFocus
+import com.alain.epure.pdf.domain.pageFraction
 import com.alain.epure.pdf.domain.renderWidthPx
 import com.alain.epure.pdf.domain.scrollOffsetForFocus
 import com.alain.epure.pdf.system.PageSize
@@ -106,7 +107,7 @@ fun ReaderScreen(
                 .collect { (index, offset) ->
                     anchorPage = index
                     val item = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == index }
-                    if (item != null && item.size > 0) anchorFraction = offset.toFloat() / item.size
+                    if (item != null && item.size > 0) anchorFraction = pageFraction(offset, item.size)
                 }
         }
 
