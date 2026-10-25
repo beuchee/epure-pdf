@@ -1,6 +1,6 @@
 # Feuille de route — Épure PDF
 
-> Version 0.1 — 24 octobre 2026
+> Version 0.2 — 25 octobre 2026
 > Référence : `SPEC.md` 0.1, `CHARTE.md` 1.0.
 > Règles : une tâche n'est cochée qu'une fois **validée sur l'appareil** (Samsung, Android 16 / One UI 8.0). Un jalon n'est commencé que lorsque le précédent est terminé. Une session Claude Code par session listée ci-dessous. Commit après chaque étape validée.
 > Les décisions préalables d'un jalon (« À trancher avant ») sont consignées dans `DECISIONS.md` **avant** l'implémentation correspondante.
@@ -11,11 +11,11 @@
 
 | Jalon | Contenu | État |
 |---|---|---|
-| 0 | Mise en place du projet, dépôt, licence, documents | À faire |
-| 1 | Lecteur de base : moteur, ouverture par le sélecteur, défilement, zoom | À faire |
-| 2 | Ouverture depuis d'autres apps, récents, reprise, « À propos » | À faire |
-| 3 | Confort : commandes, mode nuit, indicateur et saut de page, écran allumé, partage | À faire |
-| 4 | Marque-pages, recherche, table des matières (selon le moteur) | À faire |
+| 0 | Mise en place du projet, dépôt, licence, documents | Terminé |
+| 1 | Lecteur de base : moteur, ouverture par le sélecteur, défilement, zoom | Terminé |
+| 2 | Ouverture depuis d'autres apps, récents, reprise, « À propos » | Terminé |
+| 3 | Confort : commandes, mode nuit, indicateur et saut de page, écran allumé, partage | Terminé |
+| 4 | Marque-pages, recherche, table des matières (selon le moteur) | Terminé (sommaire écarté, DEC-0036) |
 | 5 | Optimisation : gros fichiers, mémoire, PDF protégés ou mal formés | À faire |
 | — | Autres formats (EPUB, CBZ, CBR) | Hors feuille de route, `[À DÉCIDER]` (`SPEC.md` F-16) |
 
@@ -172,13 +172,13 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 - [x] Écran « Marque-pages », aller à la page, retrait par appui long, liste vide (F-10.3).
 - [x] Données effacées avec « Retirer de la liste » (F-4.4).
 
-### Session 4b — Recherche de texte (conditionnelle)
+### Session 4b — Recherche de texte (conditionnelle, réalisée)
 - [x] Champ, lancement par Entrée, saut à la première occurrence, compteur, « Précédent » / « Suivant » (F-11.1, F-11.3).
 - [x] Signalement sur la page selon la décision (F-11.4).
 - [x] Recherche interruptible, interface non bloquée (F-11.5).
 - [x] Document scanné : message (F-11.6).
 
-### Session 4c — Table des matières (conditionnelle)
+### Session 4c — Table des matières (écartée, DEC-0036)
 - [ ] Liste hiérarchique, aller à la page (F-13.1).
 - [ ] Document sans sommaire : message, action en `TextSecondary` (F-13.2).
 
@@ -225,3 +225,4 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 ## Historique
 
 - 0.1 (24/10/2026) : première version, à partir de la note de cadrage et de `SPEC.md` 0.1.
+- 0.2 (25/10/2026) : jalons 0 à 4 validés sur l'appareil (SM-A536B, Android 16). Sessions 1a à 4b réalisées ; 4c écartée (sommaire absent de PdfRenderer, DEC-0036). Contrôle des permissions avec `aapt2` (DEC-0032). Décisions : récents illisibles (DEC-0021, texte modifié), pas de copie durable (DEC-0033), constats sur les sources de fichiers (DEC-0034), choix des marque-pages et de la recherche (DEC-0035). Jalon 5 restant.
