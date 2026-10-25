@@ -3,6 +3,7 @@ package com.alain.epure.pdf.system
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.pdf.LoadParams
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Build
@@ -10,6 +11,7 @@ import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
 import android.system.OsConstants
+import androidx.annotation.RequiresApi
 import androidx.core.graphics.createBitmap
 import com.alain.epure.pdf.domain.pageHeightPx
 import java.io.File
@@ -22,7 +24,10 @@ import kotlinx.coroutines.withContext
 // Engine based on the platform PdfRenderer (DEC-0015).
 // PdfRenderer accepts one open page at a time, so every call goes through one lock.
 class PdfRendererEngine(private val temporaryDir: File) : PdfEngine {
-    override suspend fun open(context: Context, uri: Uri): OpenResult =
+    // Passwords need Android 16 and later (DEC-0015).
+    override val passwordSupported: Boolean = Build.VERSION.SDK_INT >= PASSWORD_SDK
+
+    override suspend fun open(context: Context, uri: Uri, password: String?): OpenResult =
         withContext(Dispatchers.IO) {
             val descriptor = try {
                 context.contentResolver.openFileDescriptor(uri, "r")
@@ -47,12 +52,17 @@ class PdfRendererEngine(private val temporaryDir: File) : PdfEngine {
             val readable = if (temporary == null) descriptor else ParcelFileDescriptor.open(temporary, ParcelFileDescriptor.MODE_READ_ONLY)
 
             try {
-                OpenResult.Opened(RendererDocument(PdfRenderer(readable), readable, temporary))
+                val renderer = if (password != null && passwordSupported) {
+                    openWithPassword(readable, password)
+                } else {
+                    PdfRenderer(readable)
+                }
+                OpenResult.Opened(RendererDocument(renderer, readable, temporary))
             } catch (e: SecurityException) {
-                // Without a password, PdfRenderer refuses an encrypted file this way.
+                // PdfRenderer refuses an encrypted file this way: no password yet, or a wrong one.
                 readable.close()
                 temporary?.delete()
-                OpenResult.Failed(OpenError.PasswordRequired)
+                OpenResult.Failed(if (password == null) OpenError.PasswordRequired else OpenError.WrongPassword)
             } catch (e: Exception) {
                 readable.close()
                 temporary?.delete()
@@ -63,6 +73,12 @@ class PdfRendererEngine(private val temporaryDir: File) : PdfEngine {
     // Removes copies left by an earlier run. Called once when the app starts.
     fun clearTemporaryCopies() {
         temporaryDir.deleteRecursively()
+    }
+
+    @RequiresApi(PASSWORD_SDK)
+    private fun openWithPassword(descriptor: ParcelFileDescriptor, password: String): PdfRenderer {
+        val params = LoadParams.Builder().setPassword(password).build()
+        return PdfRenderer(descriptor, params)
     }
 
     private fun isSeekable(descriptor: ParcelFileDescriptor): Boolean = try {
@@ -111,17 +127,29 @@ private class RendererDocument(
         synchronized(lock) {
             if (closed) return@withContext null
             try {
-                renderer.openPage(index).use { page ->
-                    val heightPx = pageHeightPx(widthPx, page.width.toFloat(), page.height.toFloat())
-                    val bitmap = createBitmap(widthPx, heightPx)
-                    bitmap.eraseColor(Color.WHITE)
-                    page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                    bitmap
+                renderPage(index, widthPx)
+            } catch (e: OutOfMemoryError) {
+                // Not enough memory for this width: the page is drawn at half width instead (SPEC T-6).
+                try {
+                    renderPage(index, widthPx / 2)
+                } catch (e: OutOfMemoryError) {
+                    null
                 }
-            } catch (e: Exception) {
-                null
             }
         }
+    }
+
+    // Null when the page cannot be drawn (SPEC F-14.2). Out-of-memory errors are left to the caller.
+    private fun renderPage(index: Int, widthPx: Int): Bitmap? = try {
+        renderer.openPage(index).use { page ->
+            val heightPx = pageHeightPx(widthPx, page.width.toFloat(), page.height.toFloat())
+            val bitmap = createBitmap(widthPx, heightPx)
+            bitmap.eraseColor(Color.WHITE)
+            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+            bitmap
+        }
+    } catch (e: Exception) {
+        null
     }
 
     override suspend fun searchPage(index: Int, query: String): List<List<PageRect>>? = withContext(Dispatchers.IO) {
@@ -168,3 +196,6 @@ private class RendererDocument(
 
 private const val A4_WIDTH = 595f
 private const val A4_HEIGHT = 842f
+
+// PdfRenderer takes a password from Android 16 (API 36), see DEC-0015.
+private const val PASSWORD_SDK = 36

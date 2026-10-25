@@ -9,16 +9,22 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.core.content.IntentCompat
 import androidx.lifecycle.ViewModelProvider
 import com.alain.epure.pdf.ui.AboutScreen
 import com.alain.epure.pdf.ui.AppViewModel
 import com.alain.epure.pdf.ui.HomeScreen
+import com.alain.epure.pdf.ui.PasswordDialog
 import com.alain.epure.pdf.ui.SettingsScreen
 import com.alain.epure.pdf.ui.ReaderScreen
 import com.alain.epure.pdf.ui.UiState
+import com.alain.epure.pdf.ui.theme.Black
 import com.alain.epure.pdf.ui.theme.EpureTheme
 
 class MainActivity : ComponentActivity() {
@@ -69,6 +75,13 @@ class MainActivity : ComponentActivity() {
                         onBack = { viewModel.showHome() }
                     )
                     is UiState.About -> AboutScreen(onBack = { viewModel.showSettings() })
+                    is UiState.Password -> Box(Modifier.fillMaxSize().background(Black)) {
+                        PasswordDialog(
+                            wrong = current.wrong,
+                            onOpen = { viewModel.submitPassword(it) },
+                            onDismiss = { viewModel.showHome() }
+                        )
+                    }
                     is UiState.Reader -> ReaderScreen(
                         document = current.document,
                         cache = container.pageCache,

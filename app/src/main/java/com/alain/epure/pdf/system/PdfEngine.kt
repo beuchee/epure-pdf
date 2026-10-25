@@ -7,7 +7,11 @@ import android.net.Uri
 // The rest of the app only talks to these types, never to PdfRenderer directly (SPEC T-12).
 // The engine was chosen in DEC-0015.
 interface PdfEngine {
-    suspend fun open(context: Context, uri: Uri): OpenResult
+    // False when the engine cannot take a password: encrypted files then cannot be opened (SPEC F-14.1).
+    val passwordSupported: Boolean
+
+    // The password is used for this call only; it is never stored (SPEC F-14.1).
+    suspend fun open(context: Context, uri: Uri, password: String? = null): OpenResult
 }
 
 sealed interface OpenResult {
@@ -19,6 +23,7 @@ enum class OpenError {
     NotFound,
     AccessRevoked,
     PasswordRequired,
+    WrongPassword,
     Unreadable
 }
 
