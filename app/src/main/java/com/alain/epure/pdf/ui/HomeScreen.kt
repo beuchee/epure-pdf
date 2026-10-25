@@ -3,18 +3,22 @@ package com.alain.epure.pdf.ui
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,7 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -39,17 +42,22 @@ import com.alain.epure.pdf.ui.theme.TextSecondary
 fun HomeScreen(
     error: OpenError?,
     recentUnavailable: Boolean,
-    recent: RecentDocument?,
+    recents: List<RecentDocument>,
+    keepList: Boolean,
     onOpen: (Uri) -> Unit,
-    onOpenRecent: () -> Unit,
-    onRemoveRecent: () -> Unit,
+    onOpenRecent: (String) -> Unit,
+    onRemoveRecent: (String) -> Unit,
     onSettings: () -> Unit
 ) {
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         // Cancelling the picker returns null: stay on the home screen, without a message (SPEC F-1.1).
         if (uri != null) onOpen(uri)
     }
-    var menuOpen by remember { mutableStateOf(false) }
+    // The document whose long-press menu is open.
+    var menuFor by remember { mutableStateOf<RecentDocument?>(null) }
+
+    // Without the optional list, only the last document is shown (DEC-0024).
+    val shown = if (keepList) recents else recents.take(1)
 
     Column(
         modifier = Modifier
@@ -68,14 +76,6 @@ fun HomeScreen(
         ActionRow(text = stringResource(R.string.open_file)) {
             picker.launch(arrayOf("application/pdf"))
         }
-        recent?.let {
-            Spacer(Modifier.height(24.dp))
-            RecentEntry(
-                document = it,
-                onClick = onOpenRecent,
-                onLongClick = { menuOpen = true }
-            )
-        }
         val message = when {
             recentUnavailable -> R.string.error_recent_unavailable
             error != null -> errorMessage(error)
@@ -89,36 +89,60 @@ fun HomeScreen(
                 color = TextSecondary
             )
         }
-        // Settings access sits at the bottom of the home screen (DEC-0028).
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.height(24.dp))
+        // The list takes the remaining height and scrolls when it is long.
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            if (shown.isEmpty()) {
+                if (keepList) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.no_recent),
+                            style = LabelStyle,
+                            color = TextSecondary
+                        )
+                    }
+                }
+            } else {
+                items(shown, key = { it.uri }) { document ->
+                    RecentEntry(
+                        document = document,
+                        onClick = { onOpenRecent(document.uri) },
+                        onLongClick = { menuFor = document }
+                    )
+                }
+            }
+        }
         TextAction(text = stringResource(R.string.settings_title), onClick = onSettings)
     }
 
-    if (menuOpen && recent != null) {
+    menuFor?.let { document ->
         // Menu window (CHARTE A.6): the title is the file name, the action removes the entry only.
-        Dialog(onDismissRequest = { menuOpen = false }) {
+        Dialog(onDismissRequest = { menuFor = null }) {
             Column(
                 modifier = Modifier
                     .background(Black)
                     .padding(24.dp)
             ) {
                 Text(
-                    text = recent.name,
+                    text = document.name,
                     style = LabelStyle,
                     color = TextPrimary
                 )
                 Spacer(Modifier.height(24.dp))
                 ActionRow(text = stringResource(R.string.remove_recent)) {
-                    menuOpen = false
-                    onRemoveRecent()
+                    menuFor = null
+                    onRemoveRecent(document.uri)
                 }
             }
         }
     }
 }
 
-// The last document: name on the first line, page on the second, both as text only (SPEC F-4.1).
-@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+// A recent document: name on the first line, page on the second, both as text only (SPEC F-4.1).
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun RecentEntry(document: RecentDocument, onClick: () -> Unit, onLongClick: () -> Unit) {
     Column(

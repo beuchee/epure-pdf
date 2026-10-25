@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.alain.epure.pdf.AppContainer
 import com.alain.epure.pdf.domain.RecentDocument
 import com.alain.epure.pdf.domain.isSameFile
+import com.alain.epure.pdf.domain.limitFor
 import com.alain.epure.pdf.domain.resumePage
+import com.alain.epure.pdf.domain.withRecent
 import com.alain.epure.pdf.system.OpenError
 import com.alain.epure.pdf.system.OpenResult
 import com.alain.epure.pdf.system.PdfDocument
@@ -22,7 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 sealed interface UiState {
-    // recentUnavailable: the last document could not be reopened (DEC-0021).
+    // recentUnavailable: the document opened from the list could not be reopened (DEC-0021).
     class Home(val error: OpenError? = null, val recentUnavailable: Boolean = false) : UiState
 
     // external: the document was opened by another app, so Back returns to that app.
@@ -37,13 +39,19 @@ sealed interface UiState {
     data object About : UiState
 }
 
-// Holds the open document across rotations (SPEC F-2.6) and the last document opened (SPEC F-4, F-5).
+// Holds the open document across rotations (SPEC F-2.6), the recent documents (SPEC F-4, F-5) and the settings.
 class AppViewModel(private val container: AppContainer) : ViewModel() {
     private val _state = MutableStateFlow<UiState>(UiState.Home())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
-    private val _recent = MutableStateFlow<RecentDocument?>(null)
-    val recent: StateFlow<RecentDocument?> = _recent.asStateFlow()
+    private val _recents = MutableStateFlow<List<RecentDocument>>(emptyList())
+    val recents: StateFlow<List<RecentDocument>> = _recents.asStateFlow()
+
+    private val _keepList = MutableStateFlow(false)
+    val keepList: StateFlow<Boolean> = _keepList.asStateFlow()
+
+    // URI of the document in the reader: its position is the one that gets saved.
+    private var readerUri: String? = null
 
     // Positions are written after a pause in reading, not on every page change (SPEC F-5.1).
     private var saveJob: Job? = null
@@ -51,7 +59,10 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
     init {
         container.engine.clearTemporaryCopies()
         viewModelScope.launch {
-            _recent.value = withContext(Dispatchers.IO) { container.recents.load() }
+            _recents.value = withContext(Dispatchers.IO) { container.recents.load() }
+        }
+        viewModelScope.launch {
+            container.settings.keepList.collect { _keepList.value = it }
         }
     }
 
@@ -60,27 +71,30 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
             val name = withContext(Dispatchers.IO) { readDisplayName(container.context, uri) }
             when (val result = container.engine.open(container.context, uri)) {
                 is OpenResult.Opened -> {
-                    val previous = _recent.value
+                    val previous = _recents.value
                     // The same file under another URI keeps its position (SPEC F-4.5, DEC-0023).
-                    val sameFile = previous?.takeIf { isSameFile(it, name) }
+                    val sameFile = previous.firstOrNull { isSameFile(it, name) }
                     val page = resumePage(sameFile?.page ?: 0, result.document.pageCount)
                     val fraction = if (sameFile != null && page == sameFile.page) sameFile.fraction else 0f
-
-                    keepAccess(uri)
-                    if (previous != null && previous.uri != uri.toString()) releaseAccess(Uri.parse(previous.uri))
-                    closeCurrent()
-                    _recent.value = RecentDocument(
+                    val document = RecentDocument(
                         uri = uri.toString(),
                         name = name,
                         pageCount = result.document.pageCount,
                         page = page,
                         fraction = fraction
                     )
+                    val updated = withRecent(previous, document, _keepList.value)
+
+                    keepAccess(uri)
+                    releaseAccessOf(before = previous, after = updated)
+                    closeCurrent()
+                    readerUri = document.uri
+                    _recents.value = updated
                     persist()
                     _state.value = UiState.Reader(result.document, external, page, fraction)
                 }
                 is OpenResult.Failed -> {
-                    // The last document stays in the list: a file that cannot be reopened keeps its position (DEC-0021).
+                    // A document that cannot be reopened stays in the list with its position (DEC-0021).
                     closeCurrent()
                     _state.value = UiState.Home(result.error, recentUnavailable = fromRecent)
                 }
@@ -88,14 +102,16 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         }
     }
 
-    fun openRecent() {
-        _recent.value?.let { open(Uri.parse(it.uri), fromRecent = true) }
+    fun openRecent(uri: String) {
+        open(Uri.parse(uri), fromRecent = true)
     }
 
     // Called by the reader each time the reading position settles.
     fun onPosition(page: Int, fraction: Float) {
-        val current = _recent.value ?: return
-        _recent.value = current.copy(page = page, fraction = fraction)
+        val uri = readerUri ?: return
+        _recents.value = _recents.value.map {
+            if (it.uri == uri) it.copy(page = page, fraction = fraction) else it
+        }
         saveJob?.cancel()
         saveJob = viewModelScope.launch {
             delay(SAVE_DELAY_MS)
@@ -103,12 +119,23 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         }
     }
 
-    // « Retirer de la liste » (SPEC F-4.4): the entry, its position and the access are removed; the file is not.
-    fun removeRecent() {
-        val current = _recent.value ?: return
-        saveJob?.cancel()
-        _recent.value = null
-        releaseAccess(Uri.parse(current.uri))
+    // « Retirer de la liste » (SPEC F-4.4): the entry, its position and its access are removed; the file is not.
+    fun removeRecent(uri: String) {
+        val current = _recents.value
+        val updated = current.filterNot { it.uri == uri }
+        releaseAccessOf(before = current, after = updated)
+        _recents.value = updated
+        persist()
+    }
+
+    // Optional list (SPEC F-15.1, DEC-0024). Turning it off keeps only the last document.
+    fun setKeepList(enabled: Boolean) {
+        _keepList.value = enabled
+        viewModelScope.launch { container.settings.setKeepList(enabled) }
+        val current = _recents.value
+        val updated = current.take(limitFor(enabled))
+        releaseAccessOf(before = current, after = updated)
+        _recents.value = updated
         persist()
     }
 
@@ -136,21 +163,24 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         persist()
     }
 
-    // Writes the current entry (or its removal) on the process-wide scope, which outlives this ViewModel.
+    // Writes the current list on the process-wide scope, which outlives this ViewModel.
     private fun persist() {
-        container.appScope.launch {
-            val current = _recent.value
-            if (current == null) container.recents.clear() else container.recents.save(current)
-        }
+        container.appScope.launch { container.recents.save(_recents.value) }
     }
 
-    // Read access is kept so the document can be reopened later. Sources that refuse it still open for this session.
+    // Read access is kept so a document can be reopened later. Sources that refuse it still open for this session.
     private fun keepAccess(uri: Uri) {
         try {
             container.context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
         } catch (e: SecurityException) {
             // Reopening later will report the file as unavailable.
         }
+    }
+
+    // Releases the access of every entry that left the list.
+    private fun releaseAccessOf(before: List<RecentDocument>, after: List<RecentDocument>) {
+        val kept = after.map { it.uri }.toSet()
+        before.filterNot { it.uri in kept }.forEach { releaseAccess(Uri.parse(it.uri)) }
     }
 
     private fun releaseAccess(uri: Uri) {
@@ -166,6 +196,7 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         if (current is UiState.Reader) {
             current.document.close()
             container.pageCache.clear()
+            readerUri = null
         }
     }
 

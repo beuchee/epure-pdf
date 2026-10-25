@@ -42,18 +42,22 @@ class MainActivity : ComponentActivity() {
         setContent {
             EpureTheme {
                 val state by viewModel.state.collectAsState()
-                val recent by viewModel.recent.collectAsState()
+                val recents by viewModel.recents.collectAsState()
+                val keepList by viewModel.keepList.collectAsState()
                 when (val current = state) {
                     is UiState.Home -> HomeScreen(
                         error = current.error,
                         recentUnavailable = current.recentUnavailable,
-                        recent = recent,
+                        recents = recents,
+                        keepList = keepList,
                         onOpen = { viewModel.open(it) },
-                        onOpenRecent = { viewModel.openRecent() },
-                        onRemoveRecent = { viewModel.removeRecent() },
+                        onOpenRecent = { viewModel.openRecent(it) },
+                        onRemoveRecent = { viewModel.removeRecent(it) },
                         onSettings = { viewModel.showSettings() }
                     )
                     is UiState.Settings -> SettingsScreen(
+                        keepList = keepList,
+                        onToggleKeepList = { viewModel.setKeepList(it) },
                         onAbout = { viewModel.showAbout() },
                         onBack = { viewModel.showHome() }
                     )

@@ -642,7 +642,7 @@ Une liste de 30 récents impose une limite, une purge et la libération d'autori
 
 **Proposition**
 - Session 2b : l'accueil affiche le dernier document ouvert, avec sa position. Un seul récent est gardé ; ouvrir un autre document remplace l'entrée. Pas de liste, donc pas de limite de 30 ni de purge.
-- Historique facultatif : un réglage « Garder la liste des documents » (désactivé par défaut) activera une liste complète. Ce réglage sera ajouté en session 2c, avec l'écran Paramètres ; la liste est limitée à 10 documents (décision du porteur) et ne s'applique qu'à ce mode.
+- Historique facultatif : un réglage « Liste des documents » (désactivé par défaut) activera une liste complète. Ce réglage sera ajouté en session 2c, avec l'écran Paramètres ; la liste est limitée à 10 documents (décision du porteur) et ne s'applique qu'à ce mode.
 
 **Justification**
 Le dernier document suffit à reprendre la lecture. Une liste désactivée par défaut évite de garder des accès à des fichiers que le lecteur n'a pas demandés à retenir. Le réglage reste disponible pour qui veut un historique.

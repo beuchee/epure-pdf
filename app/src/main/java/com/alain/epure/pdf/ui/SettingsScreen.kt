@@ -18,11 +18,19 @@ import androidx.compose.ui.unit.dp
 import com.alain.epure.pdf.R
 import com.alain.epure.pdf.ui.theme.AppNameStyle
 import com.alain.epure.pdf.ui.theme.Black
+import com.alain.epure.pdf.ui.theme.LabelStyle
+import com.alain.epure.pdf.ui.theme.NoteStyle
 import com.alain.epure.pdf.ui.theme.TextPrimary
+import com.alain.epure.pdf.ui.theme.TextSecondary
 
 // Settings list (CHARTE A.6, "Liste de réglages"): a title, then actions in a list.
 @Composable
-fun SettingsScreen(onAbout: () -> Unit, onBack: () -> Unit) {
+fun SettingsScreen(
+    keepList: Boolean,
+    onToggleKeepList: (Boolean) -> Unit,
+    onAbout: () -> Unit,
+    onBack: () -> Unit
+) {
     BackHandler(onBack = onBack)
 
     Column(
@@ -36,6 +44,19 @@ fun SettingsScreen(onAbout: () -> Unit, onBack: () -> Unit) {
             text = stringResource(R.string.settings_title),
             style = AppNameStyle,
             color = TextPrimary
+        )
+        Spacer(Modifier.height(24.dp))
+        // A setting shows its state under its name; a tap switches it (SPEC F-15.1).
+        ActionRow(text = stringResource(R.string.keep_list)) { onToggleKeepList(!keepList) }
+        Text(
+            text = stringResource(if (keepList) R.string.state_on else R.string.state_off),
+            style = LabelStyle,
+            color = TextSecondary
+        )
+        Text(
+            text = stringResource(R.string.keep_list_help),
+            style = NoteStyle,
+            color = TextSecondary
         )
         Spacer(Modifier.height(24.dp))
         ActionRow(text = stringResource(R.string.about), onClick = onAbout)

@@ -119,7 +119,7 @@ Session unique (0).
 
 ### Session 2c — Paramètres et « À propos »
 - [x] Écran Paramètres minimal avec « À propos » (F-15.2) : version, licence, dépôt, confidentialité, moteur et sa licence.
-- [ ] Réglage « Garder la liste des documents » (désactivé par défaut) et liste complète, limitée à 10 documents (F-4.2, DEC-0024).
+- [x] Réglage « Liste des documents » (désactivé par défaut) et liste complète, limitée à 10 documents (F-4.2, DEC-0024).
 
 **Liste de contrôle sur l'appareil (jalon 2)**
 - [ ] « Ouvrir avec » Épure PDF depuis « Mes fichiers », Samsung Email ou Gmail, Chrome (téléchargement) : le document s'ouvre.

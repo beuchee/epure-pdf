@@ -10,6 +10,11 @@
     <string name="error_recent_unavailable">Fichier inaccessible. Ouvre-le à nouveau depuis le sélecteur.</string>
     <string name="remove_recent">Retirer de la liste</string>
     <string name="settings_title">Paramètres</string>
+    <string name="keep_list">Liste des documents</string>
+    <string name="keep_list_help">Affiche jusqu\'à 10 documents récents à l\'accueil. Désactivé, seul le dernier document est gardé.</string>
+    <string name="state_on">Activé</string>
+    <string name="state_off">Désactivé</string>
+    <string name="no_recent">Aucun fichier récent</string>
     <string name="about">À propos</string>
     <string name="about_version">Version %1$s</string>
     <string name="about_license">Licence GPL v3</string>
