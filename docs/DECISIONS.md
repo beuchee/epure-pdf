@@ -937,6 +937,7 @@ Sans objet : constat à mettre à jour après chaque nouveau test.
 - Marque-pages (F-10.2) : le marque-page est le numéro de page seul, sans libellé saisi.
 - Recherche (F-11.2) : insensible aux accents si le moteur le permet ; sinon, recherche exacte. À vérifier en session 4b.
 - Signalement (F-11.4) : rectangle gris translucide sur l'occurrence. Aucune couleur d'accent.
+  *Modifié le 25/10/2026 par le porteur, après test sur l'appareil : le gris translucide était peu visible. Le signalement est désormais le négatif de l'occurrence (couleurs inversées : noir sur blanc, ou blanc sur noir en mode nuit), réalisé par un mélange « différence » avec le jeton `TextPrimary`.*
 - Compteur (F-11.5) : affiché à la fin de la recherche, sans mise à jour pendant la recherche.
 - Retrait d'un marque-page (F-10.3) : immédiat, sans confirmation, comme pour un récent (DEC-0025).
 
@@ -945,6 +946,24 @@ Sans objet : constat à mettre à jour après chaque nouveau test.
 
 **Réversibilité**
 Facile.
+
+---
+
+## DEC-0036 — Sommaire écarté (session 4c)
+
+- Date : 25/10/2026
+- Statut : Adoptée (confirme DEC-0015 après vérification)
+- Jalon : 4 (session 4c)
+- Exigences concernées : F-13.1, F-13.2
+
+**Constat**
+L'API de `PdfRenderer` du SDK Android 36 (Android 16) ne donne ni sommaire ni signets : `PdfRenderer` et `PdfRenderer.Page` n'exposent que le rendu, les liens, le texte, la recherche et les champs de formulaire.
+
+**Décision**
+La session 4c (table des matières, F-13) est écartée. Les points F-13 sont à retirer de `SPEC.md` et de la feuille de route, par le porteur (`CLAUDE.md` §5).
+
+**Réversibilité**
+Moyenne : un sommaire demanderait une autre bibliothèque ou un autre moteur (voir DEC-0015).
 
 ---
 

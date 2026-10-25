@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
+import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Os
@@ -92,6 +93,9 @@ private class RendererDocument(
 
     override val pageCount: Int = renderer.pageCount
 
+    // PdfRenderer searches text from Android 16 (API 36), see DEC-0015.
+    override val searchable: Boolean = Build.VERSION.SDK_INT >= 36
+
     // A broken page reports A4 here; its render then fails and shows "Page illisible".
     override suspend fun pageSize(index: Int): PageSize = withContext(Dispatchers.IO) {
         synchronized(lock) {
@@ -116,6 +120,36 @@ private class RendererDocument(
                 }
             } catch (e: Exception) {
                 null
+            }
+        }
+    }
+
+    override suspend fun searchPage(index: Int, query: String): List<List<PageRect>>? = withContext(Dispatchers.IO) {
+        synchronized(lock) {
+            if (closed || !searchable) return@withContext null
+            try {
+                renderer.openPage(index).use { page ->
+                    val width = page.width.toFloat()
+                    val height = page.height.toFloat()
+                    page.searchText(query).map { occurrence ->
+                        occurrence.bounds.map { rect ->
+                            PageRect(rect.left / width, rect.top / height, rect.right / width, rect.bottom / height)
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    override suspend fun hasText(index: Int): Boolean = withContext(Dispatchers.IO) {
+        synchronized(lock) {
+            if (closed || !searchable) return@withContext false
+            try {
+                renderer.openPage(index).use { page -> page.textContents.isNotEmpty() }
+            } catch (e: Exception) {
+                false
             }
         }
     }

@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -38,6 +39,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
@@ -64,11 +67,13 @@ import com.alain.epure.pdf.domain.offsetXForFocus
 import com.alain.epure.pdf.domain.pageFraction
 import com.alain.epure.pdf.domain.renderWidthPx
 import com.alain.epure.pdf.domain.scrollOffsetForFocus
+import com.alain.epure.pdf.system.PageRect
 import com.alain.epure.pdf.system.PageSize
 import com.alain.epure.pdf.system.PdfDocument
 import com.alain.epure.pdf.system.shareDocument
 import com.alain.epure.pdf.ui.theme.Black
 import com.alain.epure.pdf.ui.theme.LabelStyle
+import com.alain.epure.pdf.ui.theme.TextPrimary
 import com.alain.epure.pdf.ui.theme.TextSecondary
 import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
@@ -99,19 +104,24 @@ fun ReaderScreen(
     var menuOpen by remember { mutableStateOf(false) }
     var goToOpen by remember { mutableStateOf(false) }
     var bookmarksOpen by remember { mutableStateOf(false) }
-    val dialogOpen = menuOpen || goToOpen || bookmarksOpen
+    var searchOpen by remember { mutableStateOf(false) }
+    val search = remember(document) { ReaderSearch(document) }
+    val dialogOpen = menuOpen || goToOpen || bookmarksOpen || searchOpen
 
     ImmersiveMode(showBars = commandsVisible)
     KeepScreenOn(keepScreenOn)
     BackHandler(onBack = onBack)
     // Registered after the handler above, so it takes precedence while it is enabled:
     // the open window closes first, then the commands, then the reader (SPEC F-6.4).
-    BackHandler(enabled = dialogOpen || commandsVisible) {
+    // An open search ends last, after the commands (SPEC F-11.5).
+    BackHandler(enabled = dialogOpen || commandsVisible || search.active) {
         when {
             menuOpen -> menuOpen = false
             goToOpen -> goToOpen = false
             bookmarksOpen -> bookmarksOpen = false
-            else -> commandsVisible = false
+            searchOpen -> searchOpen = false
+            commandsVisible -> commandsVisible = false
+            else -> search.close()
         }
     }
 
@@ -131,6 +141,10 @@ fun ReaderScreen(
         // Scrolling hides the commands at once (SPEC F-6.2).
         LaunchedEffect(listState.isScrollInProgress) {
             if (listState.isScrollInProgress) commandsVisible = false
+        }
+        // Each occurrence is brought to the top of its page (SPEC F-11.3).
+        LaunchedEffect(search.status, search.current) {
+            search.currentPage?.let { listState.scrollToItem(it) }
         }
         // The page shown in the indicator is the one taking most of the screen (SPEC F-7.1).
         val currentPageIndex by remember { derivedStateOf { currentPage(visiblePages(listState)) } }
@@ -228,7 +242,15 @@ fun ReaderScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(document.pageCount) { index ->
-                    ReaderPage(document, index, viewportWidthPx.roundToInt(), renderScale, cache, nightMode)
+                    ReaderPage(
+                        document,
+                        index,
+                        viewportWidthPx.roundToInt(),
+                        renderScale,
+                        cache,
+                        nightMode,
+                        search.highlightsOn(index)
+                    )
                 }
             }
         }
@@ -237,6 +259,11 @@ fun ReaderScreen(
         val shownPage = currentPageIndex ?: anchorPage
         if (commandsVisible) {
             CommandsTop(name = documentName, modifier = Modifier.align(Alignment.TopStart))
+        }
+        // While a search is open, its bar takes the place of the page indicator and « Plus » (SPEC F-11.3).
+        if (search.active) {
+            SearchBar(search, modifier = Modifier.align(Alignment.BottomStart))
+        } else if (commandsVisible) {
             CommandsBottom(
                 page = shownPage + 1,
                 pageCount = document.pageCount,
@@ -254,6 +281,10 @@ fun ReaderScreen(
                 onShowBookmarks = {
                     menuOpen = false
                     bookmarksOpen = true
+                },
+                onSearch = {
+                    menuOpen = false
+                    searchOpen = true
                 },
                 nightMode = nightMode,
                 onToggleNightMode = onToggleNightMode,
@@ -286,6 +317,16 @@ fun ReaderScreen(
                 onDismiss = { bookmarksOpen = false }
             )
         }
+        if (searchOpen) {
+            SearchDialog(
+                searchable = document.searchable,
+                onSearch = { query ->
+                    searchOpen = false
+                    search.start(scope, query)
+                },
+                onDismiss = { searchOpen = false }
+            )
+        }
     }
 }
 
@@ -306,7 +347,8 @@ private fun ReaderPage(
     viewportWidthPx: Int,
     renderScale: Float,
     cache: LruByteCache<PageKey, Bitmap>,
-    nightMode: Boolean
+    nightMode: Boolean,
+    highlights: List<PageRect>
 ) {
     val size by produceState<PageSize?>(null, document, index) {
         value = document.pageSize(index)
@@ -361,6 +403,22 @@ private fun ReaderPage(
                 color = TextSecondary
             )
             else -> Box(Modifier.fillMaxSize().background(if (nightMode) Color.Black else Color.White))
+        }
+        // Every occurrence of the search is drawn as its negative: the colours under it are inverted,
+        // so black on white becomes white on black, and the reverse in night mode (SPEC F-11.4).
+        if (highlights.isNotEmpty()) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val width = this.size.width
+                val height = this.size.height
+                highlights.forEach { rect ->
+                    drawRect(
+                        color = TextPrimary,
+                        blendMode = BlendMode.Difference,
+                        topLeft = Offset(rect.left * width, rect.top * height),
+                        size = Size((rect.right - rect.left) * width, (rect.bottom - rect.top) * height)
+                    )
+                }
+            }
         }
     }
 }
