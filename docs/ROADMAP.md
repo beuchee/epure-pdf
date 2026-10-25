@@ -173,20 +173,20 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 - [x] Données effacées avec « Retirer de la liste » (F-4.4).
 
 ### Session 4b — Recherche de texte (conditionnelle)
-- [ ] Champ, lancement par Entrée, saut à la première occurrence, compteur, « Précédent » / « Suivant » (F-11.1, F-11.3).
-- [ ] Signalement sur la page selon la décision (F-11.4).
-- [ ] Recherche interruptible, interface non bloquée (F-11.5).
-- [ ] Document scanné : message (F-11.6).
+- [x] Champ, lancement par Entrée, saut à la première occurrence, compteur, « Précédent » / « Suivant » (F-11.1, F-11.3).
+- [x] Signalement sur la page selon la décision (F-11.4).
+- [x] Recherche interruptible, interface non bloquée (F-11.5).
+- [x] Document scanné : message (F-11.6).
 
 ### Session 4c — Table des matières (conditionnelle)
 - [ ] Liste hiérarchique, aller à la page (F-13.1).
 - [ ] Document sans sommaire : message, action en `TextSecondary` (F-13.2).
 
 **Liste de contrôle sur l'appareil (jalon 4)**
-- [ ] Ajouter trois marque-pages, fermer, rouvrir : ils sont conservés et triés.
-- [ ] Rechercher un mot présent 10 fois dans le document 1 : compteur juste, navigation correcte.
-- [ ] Rechercher dans le document 2 (long) : interface réactive, Retour interrompt.
-- [ ] Rechercher dans le document 3 (scanné) : message.
+- [x] Ajouter trois marque-pages, fermer, rouvrir : ils sont conservés et triés.
+- [x] Rechercher un mot présent 10 fois dans le document 1 : compteur juste, navigation correcte.
+- [x] Rechercher dans le document 2 (long) : interface réactive, Retour interrompt.
+- [x] Rechercher dans le document 3 (scanné) : message.
 - [ ] Sommaire du document 2 : niveaux respectés, saut correct.
 
 ---

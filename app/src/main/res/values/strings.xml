@@ -22,6 +22,16 @@
     <string name="cancel">Annuler</string>
     <string name="page_out_of_range">Entre 1 et %1$d.</string>
     <string name="share_unavailable">Ce fichier ne peut pas être partagé depuis Épure PDF.</string>
+    <string name="search_action">Rechercher</string>
+    <string name="search_title">Rechercher</string>
+    <string name="search_unavailable">La recherche demande Android 16 ou plus.</string>
+    <string name="search_searching">Recherche…</string>
+    <string name="search_counter">%1$d / %2$d</string>
+    <string name="search_not_found">Aucun résultat</string>
+    <string name="search_no_text">Ce document ne contient pas de texte.</string>
+    <string name="search_previous">Précédent</string>
+    <string name="search_next">Suivant</string>
+    <string name="search_close">Fermer</string>
     <string name="bookmark_title">Marque-page</string>
     <string name="bookmark_add">Ajouter</string>
     <string name="bookmark_remove">Retirer</string>

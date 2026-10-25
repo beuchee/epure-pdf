@@ -25,13 +25,25 @@ enum class OpenError {
 // Page size in points (1/72 inch).
 data class PageSize(val width: Float, val height: Float)
 
+// A rectangle as fractions of the page width and height, from 0 to 1, top-left origin.
+data class PageRect(val left: Float, val top: Float, val right: Float, val bottom: Float)
+
 interface PdfDocument {
     val pageCount: Int
+
+    // Text search needs Android 16 and later (DEC-0015); false elsewhere.
+    val searchable: Boolean
 
     suspend fun pageSize(index: Int): PageSize
 
     // Returns null when the page cannot be rendered (SPEC F-14.2).
     suspend fun render(index: Int, widthPx: Int): Bitmap?
+
+    // One list of rectangles per occurrence of the text on the page. Null when the page cannot be searched.
+    suspend fun searchPage(index: Int, query: String): List<List<PageRect>>?
+
+    // True when the page has a text layer. A scanned page has none (SPEC F-11.6).
+    suspend fun hasText(index: Int): Boolean
 
     // Safe to call from any thread; waits for a render in progress.
     fun close()

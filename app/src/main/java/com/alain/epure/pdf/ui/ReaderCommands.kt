@@ -96,6 +96,7 @@ fun MoreMenu(
     hasBookmarks: Boolean,
     onToggleBookmark: () -> Unit,
     onShowBookmarks: () -> Unit,
+    onSearch: () -> Unit,
     nightMode: Boolean,
     onToggleNightMode: (Boolean) -> Unit,
     keepScreenOn: Boolean,
@@ -127,6 +128,8 @@ fun MoreMenu(
                     color = TextSecondary
                 )
             }
+            Spacer(Modifier.height(24.dp))
+            ActionRow(text = stringResource(R.string.search_action)) { onSearch() }
             Spacer(Modifier.height(24.dp))
             // Title, then the action in grey below it: « Ajouter » becomes « Retirer » once the page is marked.
             ActionRow(text = stringResource(R.string.bookmark_title)) { onToggleBookmark() }
