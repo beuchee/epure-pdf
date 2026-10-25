@@ -1074,6 +1074,35 @@ Moyenne : le rendu par tuiles ajoute une seconde voie de rendu dans le lecteur.
 
 ---
 
+## DEC-0041 — Cache de pages et cible de mémoire (mesures de la session 5a)
+
+- Date : 25/10/2026
+- Statut : Adoptée (décision du porteur, prise le 25/10/2026, après mesure sur l'appareil SM-A536B)
+- Jalon : 5 (session 5a)
+- Exigences concernées : T-6, T-7
+
+**Mesures** (`TOTAL PSS` de `dumpsys meminfo`, en Mo, appareil SM-A536B, Android 16)
+- App à vide (accueil) : environ 138.
+- Document 2 après défilement : environ 205.
+- Document 5 après défilement : environ 153.
+- Document 9 après défilement : environ 320.
+- Ouverture sur les documents de test : moins de 0,5 s (porteur, sur ses propres documents).
+
+La limite de tas de l'appareil est de 256 Mo, donc le cache de pages vaut environ 32 Mo. La mémoire mesurée provient surtout du décodage des pages par PdfRenderer, pas du cache.
+
+**Décisions**
+- Cache de pages : 1/8 de la mémoire du tas, soit environ 32 Mo. Pas de changement.
+- Cible de mémoire : rester sous 350 Mo de `TOTAL PSS` sur les documents testés, défilement compris. Le document 9 (320 Mo) respecte cette cible.
+- Les cibles de temps de T-7 (1 s pour 20 pages, 2 s pour 500 pages) sont confirmées : les mesures sont nettement en dessous.
+
+**Conséquences**
+- `SPEC.md` T-6 et T-7 à aligner par le porteur (`CLAUDE.md` §5).
+
+**Réversibilité**
+Facile.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).

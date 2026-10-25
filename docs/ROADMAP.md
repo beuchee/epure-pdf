@@ -196,7 +196,7 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 **À trancher avant** : taille du cache, taille maximale d'image, rendu par tuiles (T-6) ; cibles de temps (T-7) ; mot de passe jamais enregistré (F-14.1) ; poignée de défilement rapide (F-7.3).
 
 ### Session 5a — Gros fichiers et mémoire
-- [ ] Mesurer mémoire et temps sur les documents 2, 5, 9 ; ajuster le cache.
+- [x] Mesurer mémoire et temps sur les documents 2, 5, 9 ; ajuster le cache (DEC-0041).
 - [x] Très grandes pages : rendu par tuiles au zoom (F-14.3, DEC-0040).
 - [ ] Repli en résolution réduite en cas de manque de mémoire (T-6).
 - [ ] Poignée de défilement rapide : écartée (F-7.3, DEC-0039).
