@@ -915,11 +915,18 @@ Moyenne : une option (b) demanderait une nouvelle décision, une mise à jour de
 
 **Constats**
 - F-1.3 : le droit reçu par « Ouvrir avec » sur un PDF ouvert depuis « Mes fichiers » n'est pas persistant. Le récent n'est alors plus lisible et affiche « Fichier inaccessible » (DEC-0021).
-- F-1.4 : un document reçu par Gmail et par Firefox Focus s'ouvre et reste lisible tant qu'il est ouvert (constat du 25/10/2026). Le test ne permet pas de savoir si le flux était repositionnable ni si une copie temporaire a été créée : la lisibilité est le seul critère observé. Les autres sources restent à tester.
+- F-1.4, Gmail : le document s'ouvre et reste lisible. Aucun dossier de copies temporaires pendant la lecture : le flux était repositionnable et le document a été lu directement (constat du 25/10/2026, vérifié avec `adb shell run-as com.alain.epure.pdf ls cache/opened`).
+- F-1.4, Firefox Focus : le document, ouvert puis téléchargé, s'ouvre et reste lisible. Aucun dossier de copies temporaires pendant la lecture : lu directement, comme pour Gmail (constat du 25/10/2026).
+- Chrome, téléchargement ouvert par la notification de Chrome (Épure PDF choisi comme lecteur par défaut) : le document s'ouvre dans Épure PDF et reste lisible. Aucun dossier de copies temporaires pendant la lecture : lu directement (constat du 25/10/2026).
+- Samsung Browser : ouvre les PDF dans son propre lecteur et ne propose pas Épure PDF. Le test F-1.4 ne peut donc pas être fait depuis ce navigateur.
+- WhatsApp : le document, ouvert avec Épure PDF, est affiché. Aucun dossier de copies temporaires pendant la lecture : lu directement (constat du 25/10/2026).
+- « Mes fichiers » : le document, ouvert avec Épure PDF, est affiché. Aucun dossier de copies temporaires pendant la lecture : lu directement (constat du 25/10/2026).
+
+Bilan : toutes les sources testées (Gmail, Firefox Focus, Chrome, WhatsApp, « Mes fichiers ») fournissent un fichier repositionnable ; aucune copie temporaire n'a été nécessaire. La copie de DEC-0022 reste en place pour les autres sources, non testées.
 
 **Conséquences**
 - Le récent issu de « Mes fichiers » suit DEC-0021 ; aucun changement de code.
-- Les cases F-1.3 et F-1.4 de la session 2a sont cochées dans `ROADMAP.md`, sur la base de ce constat.
+- Les cases de la session 2a sur les droits et les copies sont cochées, sur la base de ce constat.
 
 **Réversibilité**
 Sans objet : constat à mettre à jour après chaque nouveau test.
