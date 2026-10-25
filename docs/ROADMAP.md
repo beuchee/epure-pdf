@@ -168,9 +168,9 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 **À trancher avant** : libellé des marque-pages (F-10.2) ; recherche insensible aux accents, couleur du signalement, compteur (F-11.2, F-11.4, F-11.5).
 
 ### Session 4a — Marque-pages
-- [ ] Ajouter / retirer un marque-page sur la page courante (F-10.1).
-- [ ] Écran « Marque-pages », aller à la page, retrait par appui long, liste vide (F-10.3).
-- [ ] Données effacées avec « Retirer de la liste » (F-4.4).
+- [x] Ajouter / retirer un marque-page sur la page courante (F-10.1).
+- [x] Écran « Marque-pages », aller à la page, retrait par appui long, liste vide (F-10.3).
+- [x] Données effacées avec « Retirer de la liste » (F-4.4).
 
 ### Session 4b — Recherche de texte (conditionnelle)
 - [ ] Champ, lancement par Entrée, saut à la première occurrence, compteur, « Précédent » / « Suivant » (F-11.1, F-11.3).

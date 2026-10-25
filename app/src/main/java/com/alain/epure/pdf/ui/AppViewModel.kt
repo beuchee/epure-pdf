@@ -9,6 +9,7 @@ import com.alain.epure.pdf.domain.RecentDocument
 import com.alain.epure.pdf.domain.isSameFile
 import com.alain.epure.pdf.domain.limitFor
 import com.alain.epure.pdf.domain.resumePage
+import com.alain.epure.pdf.domain.toggledBookmarks
 import com.alain.epure.pdf.domain.withRecent
 import com.alain.epure.pdf.system.OpenError
 import com.alain.epure.pdf.system.OpenResult
@@ -58,6 +59,10 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
     private val _keepScreenOn = MutableStateFlow(false)
     val keepScreenOn: StateFlow<Boolean> = _keepScreenOn.asStateFlow()
 
+    // Bookmarks by document URI (SPEC F-10, DEC-0035).
+    private val _bookmarks = MutableStateFlow<Map<String, List<Int>>>(emptyMap())
+    val bookmarks: StateFlow<Map<String, List<Int>>> = _bookmarks.asStateFlow()
+
     // URI of the document in the reader: its position is the one that gets saved.
     private var readerUri: String? = null
 
@@ -68,6 +73,9 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         container.engine.clearTemporaryCopies()
         viewModelScope.launch {
             _recents.value = withContext(Dispatchers.IO) { container.recents.load() }
+        }
+        viewModelScope.launch {
+            _bookmarks.value = withContext(Dispatchers.IO) { container.bookmarks.load() }
         }
         viewModelScope.launch {
             container.settings.keepList.collect { _keepList.value = it }
@@ -145,13 +153,23 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
         }
     }
 
-    // « Retirer de la liste » (SPEC F-4.4): the entry, its position and its access are removed; the file is not.
+    // « Retirer de la liste » (SPEC F-4.4): the entry, its position, its bookmarks and its access are removed; the file is not.
     fun removeRecent(uri: String) {
         val current = _recents.value
         val updated = current.filterNot { it.uri == uri }
         releaseAccessOf(before = current, after = updated)
         _recents.value = updated
+        _bookmarks.value = _bookmarks.value - uri
         persist()
+        persistBookmarks()
+    }
+
+    // Adds or removes a bookmark on a page of the document in the reader (SPEC F-10.1, F-10.3).
+    fun toggleBookmark(page: Int) {
+        val uri = readerUri ?: return
+        val pages = toggledBookmarks(_bookmarks.value[uri].orEmpty(), page)
+        _bookmarks.value = if (pages.isEmpty()) _bookmarks.value - uri else _bookmarks.value + (uri to pages)
+        persistBookmarks()
     }
 
     // Optional list (SPEC F-15.1, DEC-0024). Turning it off keeps only the last document.
@@ -192,6 +210,10 @@ class AppViewModel(private val container: AppContainer) : ViewModel() {
     // Writes the current list on the process-wide scope, which outlives this ViewModel.
     private fun persist() {
         container.appScope.launch { container.recents.save(_recents.value) }
+    }
+
+    private fun persistBookmarks() {
+        container.appScope.launch { container.bookmarks.save(_bookmarks.value) }
     }
 
     // Read access is kept so a document can be reopened later. Sources that refuse it still open for this session.
