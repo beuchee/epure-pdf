@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -51,12 +54,14 @@ fun HomeScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Black)
+            // Edge-to-edge: keep the title clear of the status bar and the navigation bar.
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(horizontal = 24.dp, vertical = 24.dp)
     ) {
         Text(
             text = stringResource(R.string.app_name),
             style = AppNameStyle,
-            color = TextPrimary
+            color = TextSecondary
         )
         Spacer(Modifier.height(24.dp))
         ActionRow(text = stringResource(R.string.open_file)) {
