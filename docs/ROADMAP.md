@@ -213,8 +213,8 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 - [ ] Contrôle final du manifeste fusionné.
 
 **Liste de contrôle sur l'appareil (jalon 5)**
-- [ ] Document 9 (> 50 Mo) : ouverture dans la cible de temps, défilement complet sans plantage.
-- [ ] Document 5 (A0) : zoom maximal sans plantage.
+- [x] Document 9 (> 50 Mo) : ouverture dans la cible de temps, défilement complet sans plantage.
+- [x] Document 5 (A0) : zoom maximal sans plantage.
 - [x] Document 6 : bon mot de passe → ouverture ; mauvais → message ; réouverture → mot de passe redemandé.
 - [x] Document 7 (corrompu) : message, pas de plantage.
 - [x] Écran partagé avec une autre app : lecture correcte.

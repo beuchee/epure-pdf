@@ -1124,6 +1124,24 @@ Facile : une détection des pages blanches ou une autre bibliothèque de rendu p
 
 ---
 
+## DEC-0043 — Permission interne `DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` conservée
+
+- Date : 27/10/2026
+- Statut : Adoptée (décision du porteur, prise le 27/10/2026)
+- Jalon : 5 (session 5c)
+- Exigences concernées : §4 de `CLAUDE.md`, DEC-0005, DEC-0032
+
+**Constat**
+`aapt2 dump permissions` liste une permission : `com.alain.epure.pdf.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`. Elle n'est pas écrite dans le code de l'app ; elle est déclarée dans le manifeste fusionné, par une bibliothèque AndroidX. Elle est protégée au niveau `signature` : seules les apps signées avec la même clé peuvent l'obtenir. Elle n'apparaît pas dans « Infos sur l'application » et ne donne aucun accès aux données.
+
+**Décision**
+La permission est conservée. Elle ne fait pas partie des permissions interdites (`INTERNET`, lecture de stockage, etc.) et ne demande rien à l'utilisateur. Elle n'est pas retirée, pour ne pas toucher aux récepteurs dynamiques de la bibliothèque. Le contrôle `aapt2` reste attendu avec cette seule ligne (DEC-0032).
+
+**Réversibilité**
+Facile : retirer la permission demanderait `tools:node="remove"` ou une autre bibliothèque, à consigner dans une nouvelle entrée.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).
