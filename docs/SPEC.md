@@ -253,7 +253,9 @@ Fonction **écartée** : PdfRenderer ne fournit pas le sommaire (« outline ») 
 
 **F-15.2 « À propos »** : nom, version, licence GPL v3, lien « Dépôt GitHub » (ouvert par le navigateur, sans permission réseau propre à l'app), section confidentialité (texte de T-2), licences des ressources tierces éventuelles, mention du moteur de rendu et de sa licence.
 
-### F-16 Autres formats : EPUB, CBZ, CBR — [À DÉCIDER]
+### F-16 Autres formats : EPUB, CBZ, CBR — tranché (DEC-0037)
+
+Hors de cette app : chaque format fera une application séparée, si le porteur le décide.
 
 Listés dans les fonctions proposées, absents de la feuille de route. Points à trancher avant toute implémentation :
 
@@ -404,7 +406,6 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 | F-2.4 | Mode immersif sous One UI 8 |
 | F-4.2 | Limite système des autorisations persistantes |
 | F-12.2 | Possibilité de repartager une URI selon la source |
-| F-16 | Licence des bibliothèques RAR et compatibilité GPL v3 |
 | T-13 | Fenêtre flottante One UI (l'écran partagé est validé, jalon 5c) |
 
 ---
