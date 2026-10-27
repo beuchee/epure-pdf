@@ -23,7 +23,7 @@
     <string name="go_to_page">Aller à la page</string>
     <string name="go">Aller</string>
     <string name="cancel">Annuler</string>
-    <string name="page_out_of_range">Entre 1 et %1$d.</string>
+    <string name="page_out_of_range">Saisis un numéro entre 1 et %1$d.</string>
     <string name="share_unavailable">Ce fichier ne peut pas être partagé depuis Épure PDF.</string>
     <string name="search_action">Rechercher</string>
     <string name="search_title">Rechercher</string>
