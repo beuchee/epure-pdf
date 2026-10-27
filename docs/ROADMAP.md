@@ -209,8 +209,8 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 ### Session 5c — Vérifications finales
 - [x] Écran partagé et fenêtre flottante One UI (T-13).
 - [ ] Revue complète des `[À VÉRIFIER]` restants dans `SPEC.md`.
-- [ ] Revue du README et de « À propos ».
-- [ ] Contrôle final du manifeste fusionné.
+- [x] Revue du README et de « À propos ».
+- [x] Contrôle final du manifeste fusionné.
 
 **Liste de contrôle sur l'appareil (jalon 5)**
 - [x] Document 9 (> 50 Mo) : ouverture dans la cible de temps, défilement complet sans plantage.
