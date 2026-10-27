@@ -309,7 +309,7 @@ Listés dans les fonctions proposées, absents de la feuille de route. Points à
 - Logique couverte par des tests unitaires dans `domain/` : cycle de zoom du double toucher, calcul de la page courante, calcul de résolution de rendu, politique du cache, limite des récents, validation du numéro de page, identification secondaire d'un document.
 - Le moteur de rendu est isolé derrière une interface dans `system/`, pour pouvoir en changer sans toucher à l'interface.
 
-**T-13 Multi-fenêtre.** **[À VÉRIFIER]** Lecture en écran partagé et en fenêtre flottante One UI : pas de plantage, rendu adapté à la largeur disponible.
+**T-13 Multi-fenêtre.** Lecture en écran partagé : validée sur l'appareil (jalon 5c). Fenêtre flottante One UI : **[À VÉRIFIER]** (pas de plantage, rendu adapté à la largeur disponible).
 
 ---
 
@@ -321,7 +321,7 @@ Décision prise après un prototype comparatif (jalon 1, session 1a), consignée
 
 | Option | Description | Points forts | Points à vérifier |
 |---|---|---|---|
-| A — PdfRenderer | Classe intégrée à Android | Zéro dépendance, hors ligne par nature, aucun impact sur la licence | Recherche de texte, mot de passe : API récentes, disponibles selon la version d'Android et les extensions SDK (**[À VÉRIFIER]** sur l'appareil) ; sommaire probablement absent ; tout le lecteur (défilement, zoom, cache) est à écrire |
+| A — PdfRenderer | Classe intégrée à Android | Zéro dépendance, hors ligne par nature, aucun impact sur la licence | Recherche de texte, mot de passe : API récentes, disponibles selon la version d'Android et les extensions SDK (validées sur l'appareil : recherche au jalon 4b, mot de passe au jalon 5b) ; sommaire probablement absent ; tout le lecteur (défilement, zoom, cache) est à écrire |
 | B — androidx.pdf | Bibliothèque Jetpack (visionneuse prête à l'emploi) | Moins de code ; recherche et sélection intégrées | Stabilité (alpha / bêta ?), compatibilité `minSdk` 31, intégration avec Compose, style personnalisable selon la charte, dépendances tirées, permission `INTERNET` injectée ou non |
 | C — Moteur tiers (pdfium, MuPDF…) | Seulement si A et B sont insuffisants | Fidélité, sommaire, recherche | Poids de l'APK, code natif embarqué (contraire à « pas de code natif » sauf décision), licence (MuPDF : AGPL — l'ensemble passerait sous AGPL) |
 
@@ -399,15 +399,13 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 
 | Réf. | Point |
 |---|---|
-| §6 | PdfRenderer sous Android 16 / One UI 8 : mot de passe à vérifier (recherche vérifiée en session 4b ; sommaire écarté, DEC-0036) |
-| §6 | androidx.pdf : statut, `minSdk`, dépendances, permissions injectées, compatibilité Compose |
 | F-1.3 | Persistance des droits reçus par `VIEW` : non persistante depuis « Mes fichiers » (DEC-0034) ; autres sources à vérifier |
 | F-1.4 | Sources fournissant un descripteur non repositionnable : constaté, aucune des cinq sources testées n'en fournit (DEC-0034) |
 | F-2.4 | Mode immersif sous One UI 8 |
 | F-4.2 | Limite système des autorisations persistantes |
 | F-12.2 | Possibilité de repartager une URI selon la source |
 | F-16 | Licence des bibliothèques RAR et compatibilité GPL v3 |
-| T-13 | Écran partagé et fenêtre flottante |
+| T-13 | Fenêtre flottante One UI (l'écran partagé est validé, jalon 5c) |
 
 ---
 
