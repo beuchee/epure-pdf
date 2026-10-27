@@ -203,7 +203,7 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 
 ### Session 5b — Documents protégés ou mal formés
 - [x] Mot de passe : boîte de saisie si le moteur le permet, sinon message (F-14.1).
-- [ ] Page illisible isolée : « Page illisible », reste du document lisible (F-14.2).
+- [ ] Page illisible isolée : écartée (F-14.2, DEC-0042).
 - [ ] Revue de tous les messages d'erreur (ton neutre, `strings.xml`).
 
 ### Session 5c — Vérifications finales

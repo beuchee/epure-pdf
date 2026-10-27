@@ -243,7 +243,7 @@ Fonction **écartée** : PdfRenderer ne fournit pas le sommaire (« outline ») 
 - Le mot de passe n'est **jamais** enregistré (proposition **[À DÉCIDER]**) : il est redemandé à chaque ouverture.
 - Si le moteur ne le permet pas : « Ce document est protégé par un mot de passe et ne peut pas être ouvert. »
 
-**F-14.2 PDF mal formé** : message clair (F-1.5) ; si seules certaines pages échouent, la page fautive affiche « Page illisible » en `TextSecondary`, le reste du document reste lisible.
+**F-14.2 PDF mal formé** : message clair (F-1.5). Page isolée illisible : écartée (DEC-0042) ; une page cassée s'affiche blanche, sans message.
 
 **F-14.3 Très grandes pages** (affiches, plans) : rendu à la résolution maximale autorisée (T-6), sans plantage.
 
@@ -423,7 +423,7 @@ Conservé **hors du dépôt** (aucun document personnel ou sous droits d'auteur 
 | 4 | Pages de formats mixtes (portrait, paysage, A3) | F-2.3 |
 | 5 | Très grande page (affiche, A0) | F-14.3, T-6 |
 | 6 | PDF protégé par mot de passe | F-14.1 |
-| 7 | PDF tronqué ou corrompu (généré) | F-1.5, F-14.2 |
+| 7 | PDF tronqué ou corrompu (généré) | F-1.5 |
 | 8 | Fichier non PDF renommé en `.pdf` | F-1.5 |
 | 9 | PDF de plus de 50 Mo, riche en images | T-6, T-7 |
 | 10 | PDF avec formulaire et annotations | Rendu sans plantage (pas d'édition) |

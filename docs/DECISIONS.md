@@ -1103,6 +1103,27 @@ Facile.
 
 ---
 
+## DEC-0042 — Page illisible isolée écartée (F-14.2)
+
+- Date : 27/10/2026
+- Statut : Adoptée (décision du porteur, prise le 27/10/2026)
+- Jalon : 5 (session 5b)
+- Exigences concernées : F-14.2
+
+**Constat**
+Un document de test (`partial-page.pdf`, 3 pages, page 2 à `MediaBox [0 0 0 0]` et flux de contenu cassé) s'ouvre. Sur le SM-A536B, Android 16 :
+- `PdfRenderer` annonce 612 × 792 pour la page cassée (format Lettre par défaut) ;
+- le rendu de cette page réussit sans erreur et donne une page blanche.
+« Page illisible » n'apparaît que lorsque le rendu échoue, donc jamais pour ce cas. Le moteur ne signale pas l'erreur, et l'application n'a aucun moyen fiable de la détecter sans analyser le contenu des pages.
+
+**Décision**
+La fonction « Page illisible isolée » (F-14.2) est écartée. Une page cassée s'affiche blanche, sans message. Le message « Ce fichier n'est pas un PDF lisible » (F-1.5) reste en place pour un fichier qui ne s'ouvre pas du tout.
+
+**Réversibilité**
+Facile : une détection des pages blanches ou une autre bibliothèque de rendu permettraient de revenir sur ce point (voir DEC-0015).
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).
