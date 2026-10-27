@@ -204,7 +204,7 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 ### Session 5b — Documents protégés ou mal formés
 - [x] Mot de passe : boîte de saisie si le moteur le permet, sinon message (F-14.1).
 - [ ] Page illisible isolée : écartée (F-14.2, DEC-0042).
-- [ ] Revue de tous les messages d'erreur (ton neutre, `strings.xml`).
+- [x] Revue de tous les messages d'erreur (ton neutre, `strings.xml`).
 
 ### Session 5c — Vérifications finales
 - [x] Écran partagé et fenêtre flottante One UI (T-13).
@@ -216,7 +216,7 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 - [ ] Document 9 (> 50 Mo) : ouverture dans la cible de temps, défilement complet sans plantage.
 - [ ] Document 5 (A0) : zoom maximal sans plantage.
 - [x] Document 6 : bon mot de passe → ouverture ; mauvais → message ; réouverture → mot de passe redemandé.
-- [ ] Document 7 (corrompu) : message, pas de plantage.
+- [x] Document 7 (corrompu) : message, pas de plantage.
 - [x] Écran partagé avec une autre app : lecture correcte.
 - [ ] Aucune permission dans « Infos sur l'application ».
 
