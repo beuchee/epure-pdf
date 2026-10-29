@@ -158,26 +158,26 @@ Navigation : état simple géré à la main, sans `navigation-compose` (`CHARTE.
 
 **F-6.1 Affichage.** Un toucher simple sur une page affiche les commandes ; un nouveau toucher les masque. Apparition et disparition immédiates, sans animation (`CHARTE.md` A.5).
 
-**F-6.2 Masquage automatique.** Les commandes disparaissent après 4 s sans interaction (proposition **[À DÉCIDER]**), ou dès que l'utilisateur fait défiler le document.
+**F-6.2 Masquage automatique.** Les commandes disparaissent après 4 s sans interaction, ou dès que l'utilisateur fait défiler le document (DEC-0031).
 
 **F-6.3 Contenu.** Fond `Black`, texte seul, cibles ≥ 48 dp.
 - En haut : nom du fichier (`LabelStyle`, `TextPrimary`, une ligne avec passage à la ligne autorisé).
 - En bas : indicateur « 12 / 48 » (F-7) et actions texte selon le jalon : « Sommaire », « Rechercher », « Marque-page », « Nuit », « Plus ».
 - « Plus » ouvre une fenêtre de menu avec les actions moins fréquentes : « Partager », « Marque-pages », « Écran allumé », etc.
-- **[À DÉCIDER]** Répartition exacte entre barre et menu « Plus » : à fixer au jalon 3 sur l'appareil, selon la place disponible avec une police agrandie.
+- Répartition décidée (DEC-0031) : barre du haut, nom du fichier ; barre du bas, « 12 / 48 » et « Plus » ; le menu « Plus » contient « Partager », « Mode nuit », « Écran allumé ». Les actions des jalons suivants s'ajoutent à ce menu ou à la barre selon leur place.
 
 **F-6.4 Bouton Retour.** Dans l'ordre : ferme la fenêtre ouverte, puis masque les commandes, puis quitte le lecteur (retour à l'accueil, ou à l'app d'origine si ouverture par `VIEW`). Implémentation par `BackHandler` (`CHARTE.md` A.4).
 
 ### F-7 Indicateur de page et saut de page
 
 **F-7.1 Indicateur.** « 12 / 48 » (page courante / total), `LabelStyle`, `TextSecondary`, visible avec les commandes. La page courante est celle qui occupe le plus de hauteur à l'écran.
-- **[À DÉCIDER]** Indicateur permanent et discret (coin inférieur, pendant la lecture) en option. Proposition : non au jalon 3, à réévaluer.
+- Indicateur permanent et discret (coin inférieur, pendant la lecture) : non en version 1 (proposition retenue au jalon 3).
 
 **F-7.2 Aller à la page.** Toucher l'indicateur ouvre une boîte de saisie (`CHARTE.md` A.6) : titre « Aller à la page », champ numérique, actions « Annuler » et « Aller ». Entrée du clavier = « Aller ».
 - Numéro hors limites : message sous le champ, « Entre 1 et 48. », sans fermer la boîte.
 - Le saut est immédiat, sans défilement animé.
 
-**F-7.3** **[À DÉCIDER]** Poignée de défilement rapide (glisser le long du bord droit) pour les documents longs. Proposition : à évaluer au jalon 5 avec les gros fichiers.
+**F-7.3** Poignée de défilement rapide (glisser le long du bord droit) : écartée en version 1. Le défilement continu et « Aller à la page » suffisent (DEC-0039).
 
 **F-7.4** Les numéros sont ceux de la position physique (1 à N). Les libellés de page propres au PDF (i, ii, iii…) ne sont pas utilisés.
 
@@ -381,10 +381,10 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 | F-4.4, F-10.3 | Confirmation du retrait | 4 | Décidé : pas de confirmation, pour les récents (DEC-0025) et pour les marque-pages (DEC-0035) |
 | F-4.5 | Identification secondaire (nom) | 2 | Décidé : oui, sur le nom seul (DEC-0023, modifiée par le porteur) |
 | F-5.3 | Mémoriser le zoom | 2 | Décidé : non (DEC-0026) |
-| F-6.2 | Délai de masquage des commandes | 3 | 4 s |
-| F-6.3 | Répartition barre / menu « Plus » | 3 | À fixer sur l'appareil |
+| F-6.2 | Délai de masquage des commandes | 3 | 4 s (DEC-0031) |
+| F-6.3 | Répartition barre / menu « Plus » | 3 | Décidé : menu « Plus » avec « Partager », « Mode nuit », « Écran allumé » (DEC-0031) |
 | F-7.1 | Indicateur permanent | 3 | Non |
-| F-7.3 | Poignée de défilement rapide | 5 | À évaluer |
+| F-7.3 | Poignée de défilement rapide | 5 | Écartée (DEC-0039) |
 | F-8.3 | Mode nuit global ou par document | 3 | Global |
 | F-9.2 | Écran allumé par défaut | 3 | Décidé : activé (DEC-0030) |
 | F-10.2 | Libellé des marque-pages | 4 | Décidé : numéro seul (DEC-0035) |
