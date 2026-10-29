@@ -1142,6 +1142,29 @@ Facile : retirer la permission demanderait `tools:node="remove"` ou une autre bi
 
 ---
 
+## DEC-0044 — Points `[À VÉRIFIER]` restants (jalon 5, session 5c)
+
+- Date : 29/10/2026
+- Statut : Adoptée (résultats validés par le porteur sur l'appareil, SM-A536B, Android 16)
+- Jalon : 5 (session 5c)
+- Exigences concernées : F-1.3, F-2.4, F-4.2, F-12.2, T-13
+
+**Constats**
+- F-2.4 : mode immersif validé, avec navigation par gestes et navigation à 3 boutons.
+- F-1.3 : persistance des droits validée pour les sources testées (détail source par source non consigné ici ; à compléter si besoin).
+- F-12.2 : repartage d'une URI validé pour les sources testées.
+- T-13 : fenêtre flottante One UI validée. Pas de plantage, rendu adapté à la largeur.
+- F-4.2 : limite système des 512 autorisations persistantes non testée. Le test demanderait d'ouvrir plus de 512 fichiers distincts.
+
+**Décision**
+- F-4.2 : la limite n'est pas testée, elle est consignée comme limite système documentée. L'app ne garde qu'un récent, ou 10 documents avec la liste facultative (DEC-0024), donc la limite n'est pas atteignable en usage normal.
+- Les autres points passent à « validé » dans `SPEC.md` §9.2.
+
+**Réversibilité**
+Facile : un test de la limite pourra être fait plus tard, avec un jeu de fichiers généré hors du dépôt.
+
+---
+
 ## Décisions en attente
 
 La liste à jour des points `[À DÉCIDER]` est tenue dans `SPEC.md` §9.1, avec le jalon auquel chacun doit être tranché. Le premier à trancher est le **moteur de rendu** (`SPEC.md` §6), à l'issue du prototype comparatif du jalon 1 (session 1a).

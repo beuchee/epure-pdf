@@ -399,14 +399,16 @@ Conséquence : **aucune permission déclarée** dans le manifeste (objectif). Pa
 
 ### 9.2 [À VÉRIFIER] sur l'appareil
 
-| Réf. | Point |
-|---|---|
-| F-1.3 | Persistance des droits reçus par `VIEW` : non persistante depuis « Mes fichiers » (DEC-0034) ; autres sources à vérifier |
-| F-1.4 | Sources fournissant un descripteur non repositionnable : constaté, aucune des cinq sources testées n'en fournit (DEC-0034) |
-| F-2.4 | Mode immersif sous One UI 8 |
-| F-4.2 | Limite système des autorisations persistantes |
-| F-12.2 | Possibilité de repartager une URI selon la source |
-| T-13 | Fenêtre flottante One UI (l'écran partagé est validé, jalon 5c) |
+Tous les points ont été traités au jalon 5 (DEC-0044).
+
+| Réf. | Point | Résultat |
+|---|---|---|
+| F-1.3 | Persistance des droits reçus par `VIEW` | Validé sur l'appareil (DEC-0044) |
+| F-1.4 | Sources fournissant un descripteur non repositionnable | Constaté : aucune des cinq sources testées n'en fournit (DEC-0034) |
+| F-2.4 | Mode immersif sous One UI 8 | Validé sur l'appareil, navigation par gestes et à 3 boutons (DEC-0044) |
+| F-4.2 | Limite système des autorisations persistantes | Non testée : limite système documentée, usage normal bien en deçà (DEC-0044) |
+| F-12.2 | Repartage d'une URI selon la source | Validé sur l'appareil (DEC-0044) |
+| T-13 | Fenêtre flottante One UI | Validé sur l'appareil (DEC-0044) |
 
 ---
 

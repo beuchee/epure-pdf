@@ -16,7 +16,7 @@
 | 2 | Ouverture depuis d'autres apps, récents, reprise, « À propos » | Terminé |
 | 3 | Confort : commandes, mode nuit, indicateur et saut de page, écran allumé, partage | Terminé |
 | 4 | Marque-pages, recherche, table des matières (selon le moteur) | Terminé (sommaire écarté, DEC-0036) |
-| 5 | Optimisation : gros fichiers, mémoire, PDF protégés ou mal formés | À faire |
+| 5 | Optimisation : gros fichiers, mémoire, PDF protégés ou mal formés | Terminé (DEC-0044) |
 | — | Autres formats (EPUB, CBZ, CBR) | Hors feuille de route, `[À DÉCIDER]` (`SPEC.md` F-16) |
 
 ---
@@ -208,7 +208,7 @@ Les sessions 4b et 4c ne sont réalisées que si le moteur retenu au jalon 1 le 
 
 ### Session 5c — Vérifications finales
 - [x] Écran partagé et fenêtre flottante One UI (T-13).
-- [ ] Revue complète des `[À VÉRIFIER]` restants dans `SPEC.md`.
+- [x] Revue complète des `[À VÉRIFIER]` restants dans `SPEC.md` (DEC-0044).
 - [x] Revue du README et de « À propos ».
 - [x] Contrôle final du manifeste fusionné.
 
